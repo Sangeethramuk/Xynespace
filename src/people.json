@@ -1,0 +1,200 @@
+[
+  {
+    "name": "Workday Bot",
+    "avatar": "/assets/workday.png",
+    "gender": "neutral"
+  },
+  {
+    "name": "Merc AI",
+    "avatar": "/assets/merc-ai.png",
+    "gender": "neutral"
+  },
+  {
+    "name": "Klaus Müller",
+    "avatar": "/assets/faces/face-6.jpg",
+    "gender": "male",
+    "country": "Germany",
+    "me": true
+  },
+  {
+    "name": "Sophie Dubois",
+    "avatar": "https://randomuser.me/api/portraits/women/1.jpg",
+    "gender": "female",
+    "country": "France"
+  },
+  {
+    "name": "Marco Rossi",
+    "avatar": "https://randomuser.me/api/portraits/men/2.jpg",
+    "gender": "male",
+    "country": "Italy"
+  },
+  {
+    "name": "Priya Patel",
+    "avatar": "https://randomuser.me/api/portraits/women/2.jpg",
+    "gender": "female",
+    "country": "India"
+  },
+  {
+    "name": "Michael Johnson",
+    "avatar": "https://randomuser.me/api/portraits/men/3.jpg",
+    "gender": "male",
+    "country": "United States"
+  },
+  {
+    "name": "Emma Schmidt",
+    "avatar": "https://randomuser.me/api/portraits/women/3.jpg",
+    "gender": "female",
+    "country": "Germany"
+  },
+  {
+    "name": "Thomas Weber",
+    "avatar": "https://randomuser.me/api/portraits/men/4.jpg",
+    "gender": "male",
+    "country": "Germany"
+  },
+  {
+    "name": "Arjun Kumar",
+    "avatar": "https://randomuser.me/api/portraits/men/5.jpg",
+    "gender": "male",
+    "country": "India"
+  },
+  {
+    "name": "Ananya Reddy",
+    "avatar": "https://randomuser.me/api/portraits/women/4.jpg",
+    "gender": "female",
+    "country": "India",
+    "emoji-heavy": true
+  },
+  {
+    "name": "David Chen",
+    "avatar": "https://randomuser.me/api/portraits/men/6.jpg",
+    "gender": "male",
+    "country": "United States"
+  },
+  {
+    "name": "Sarah Williams",
+    "avatar": "https://randomuser.me/api/portraits/women/5.jpg",
+    "gender": "female",
+    "country": "United States",
+    "emoji-heavy": true
+  },
+  {
+    "name": "Alessandro Bianchi",
+    "avatar": "https://randomuser.me/api/portraits/men/7.jpg",
+    "gender": "male",
+    "country": "Italy"
+  },
+  {
+    "name": "Isabella Romano",
+    "avatar": "https://randomuser.me/api/portraits/women/6.jpg",
+    "gender": "female",
+    "country": "Italy",
+    "verbose": true
+  },
+  {
+    "name": "Luca Ferrari",
+    "avatar": "https://randomuser.me/api/portraits/men/8.jpg",
+    "gender": "male",
+    "country": "Italy"
+  },
+  {
+    "name": "Marie Laurent",
+    "avatar": "https://randomuser.me/api/portraits/women/7.jpg",
+    "gender": "female",
+    "country": "France",
+    "emoji-heavy": true
+  },
+  {
+    "name": "Pierre Martin",
+    "avatar": "https://randomuser.me/api/portraits/men/9.jpg",
+    "gender": "male",
+    "country": "France"
+  },
+  {
+    "name": "Rohan Sharma",
+    "avatar": "https://randomuser.me/api/portraits/men/10.jpg",
+    "gender": "male",
+    "country": "India"
+  },
+  {
+    "name": "Kavya Nair",
+    "avatar": "https://randomuser.me/api/portraits/women/8.jpg",
+    "gender": "female",
+    "country": "India",
+    "verbose": true
+  },
+  {
+    "name": "Vikram Singh",
+    "avatar": "https://randomuser.me/api/portraits/men/11.jpg",
+    "gender": "male",
+    "country": "India"
+  },
+  {
+    "name": "Hans Fischer",
+    "avatar": "https://randomuser.me/api/portraits/men/12.jpg",
+    "gender": "male",
+    "country": "Germany"
+  },
+  {
+    "name": "Anna Becker",
+    "avatar": "https://randomuser.me/api/portraits/women/9.jpg",
+    "gender": "female",
+    "country": "Germany"
+  },
+  {
+    "name": "Jennifer Brown",
+    "avatar": "https://randomuser.me/api/portraits/women/10.jpg",
+    "gender": "female",
+    "country": "United States",
+    "emoji-heavy": true
+  },
+  {
+    "name": "Robert Taylor",
+    "avatar": "https://randomuser.me/api/portraits/men/13.jpg",
+    "gender": "male",
+    "country": "United States"
+  },
+  {
+    "name": "Camille Bernard",
+    "avatar": "https://randomuser.me/api/portraits/women/11.jpg",
+    "gender": "female",
+    "country": "France",
+    "verbose": true
+  },
+  {
+    "name": "Giovanni Conti",
+    "avatar": "https://randomuser.me/api/portraits/men/14.jpg",
+    "gender": "male",
+    "country": "Italy"
+  },
+  {
+    "name": "Elena Moretti",
+    "avatar": "https://randomuser.me/api/portraits/women/12.jpg",
+    "gender": "female",
+    "country": "Italy"
+  },
+  {
+    "name": "James Anderson",
+    "avatar": "https://randomuser.me/api/portraits/men/15.jpg",
+    "gender": "male",
+    "country": "United States"
+  },
+  {
+    "name": "Lisa Martinez",
+    "avatar": "https://randomuser.me/api/portraits/women/13.jpg",
+    "gender": "female",
+    "country": "United States"
+  },
+  {
+    "name": "François Leclerc",
+    "avatar": "https://randomuser.me/api/portraits/men/16.jpg",
+    "gender": "male",
+    "country": "France"
+  },
+  {
+    "name": "Julia Klein",
+    "avatar": "https://randomuser.me/api/portraits/women/14.jpg",
+    "gender": "female",
+    "country": "Germany"
+  }
+]
