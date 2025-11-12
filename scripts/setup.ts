@@ -11,9 +11,6 @@ interface SetupAnswers {
   companyName: string
   companyDescription: string
   industry: string
-  companySize: string
-  headquarters: string
-  countries: string[]
   currentUserName: string
 }
 
@@ -319,11 +316,10 @@ function inferChannels(description: string, industry: string): {types: string[],
 async function setupWizard() {
   console.log('\n🚀 Welcome to the Vibe Slack Setup Wizard!\n')
   console.log('This wizard will help you configure your Slack environment.\n')
-  console.log('We\'ll ask just a few high-level questions and generate everything else for you.\n')
+  console.log('We\'ll ask just 4 simple questions and generate everything else for you.\n')
   console.log('💡 Tip: You can answer naturally! For example:')
-  console.log('   - "yes" or "yep" for yes/no questions')
-  console.log('   - "Germany, France, India" for countries')
-  console.log('   - "We build software" for descriptions\n')
+  console.log('   - "We build software" for company description')
+  console.log('   - "Technology" or "Automotive" for industry\n')
   
   const answers = await inquirer.prompt<SetupAnswers>([
     {
@@ -349,33 +345,6 @@ async function setupWizard() {
     },
     {
       type: 'input',
-      name: 'companySize',
-      message: 'What is your company size? (e.g., "startup", "small", "medium", "large", or "200 employees"):',
-      default: 'Medium (201-1000)',
-      filter: (input: string) => parseCompanySize(input)
-    },
-    {
-      type: 'input',
-      name: 'headquarters',
-      message: 'Where is your company headquarters located?',
-      default: 'San Francisco, CA'
-    },
-    {
-      type: 'input',
-      name: 'countries',
-      message: 'Which countries is your company present in? (e.g., "US, Germany, India" or "United States, France"):',
-      default: 'American',
-      filter: (input: string) => {
-        const parsed = parseCountries(input)
-        return parsed.length > 0 ? parsed : ['American']
-      },
-      validate: (input) => {
-        const parsed = parseCountries(input)
-        return parsed.length > 0 || 'Please enter at least one country'
-      }
-    },
-    {
-      type: 'input',
       name: 'currentUserName',
       message: 'What is your name (the logged-in user)?',
       default: 'John Doe',
@@ -383,7 +352,7 @@ async function setupWizard() {
     }
   ])
   
-  // Auto-generate values
+  // Auto-generate values with smart defaults
   const botType = inferBotType(answers.companyDescription, answers.industry)
   const botName = generateBotName(answers.companyName, botType)
   const companyLogo = generateCompanyLogo(answers.companyName)
@@ -394,8 +363,9 @@ async function setupWizard() {
   // Infer channels from company description
   const channelInfo = inferChannels(answers.companyDescription, answers.industry)
   
-  // Generate people names based on nationalities
-  const generatedPeople = generateNamesByNationality(answers.countries)
+  // Default to diverse international team (smart defaults)
+  const defaultCountries = ['American', 'German', 'Indian', 'British', 'French']
+  const generatedPeople = generateNamesByNationality(defaultCountries)
   
   // Add inferred data to answers
   const setupData = {
@@ -403,9 +373,9 @@ async function setupWizard() {
     companyLogo: companyLogo,
     companyDescription: answers.companyDescription,
     industry: answers.industry,
-    companySize: answers.companySize,
-    headquarters: answers.headquarters,
-    countries: answers.countries,
+    companySize: 'Medium (201-1000)', // Smart default
+    headquarters: 'San Francisco, CA', // Smart default
+    countries: defaultCountries,
     currentUserName: answers.currentUserName,
     currentUserAvatar: currentUserAvatar,
     botName: botName,
@@ -423,19 +393,17 @@ async function setupWizard() {
   fs.writeFileSync(setupDataPath, JSON.stringify(setupData, null, 2))
   
   console.log('\n✅ Setup data saved successfully!')
-  console.log('\n📊 Auto-generated:')
+  console.log('\n📊 Auto-generated from your answers:')
   console.log(`   • Bot name: ${botName} (${botType === 'hr' ? 'HR Bot' : botType === 'ops' ? 'Operations Bot' : 'AI Assistant'})`)
   console.log(`   • Bot avatar: Initials "${botName.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2)}"`)
   console.log(`   • User avatar: Internet photo`)
   console.log(`   • Company logo: Placeholder`)
   console.log(`   • Theme: Dark`)
-  console.log('\n📊 Inferred from your answers:')
   console.log(`   • Channel types: ${channelInfo.types.join(', ')}`)
   if (channelInfo.industrySpecific.length > 0) {
     console.log(`   • Industry-specific channels: ${channelInfo.industrySpecific.slice(0, 5).join(', ')}${channelInfo.industrySpecific.length > 5 ? '...' : ''}`)
   }
-  console.log(`   • Generated ${generatedPeople.length} team members`)
-  console.log(`   • Nationalities: ${answers.countries.join(', ')}`)
+  console.log(`   • Generated ${generatedPeople.length} team members with diverse backgrounds`)
   console.log('\n📝 Next steps:')
   console.log('   1. Review the setup data in setup-data.json')
   console.log('   2. Run: npm run generate')

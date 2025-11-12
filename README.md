@@ -17,7 +17,11 @@
 npm run start
 ```
 
-Choose Mercedes sample (instant demo) or create your custom setup (7 questions). Everything else is automatic.
+Choose between:
+- **Mercedes-Benz sample** (instant demo)
+- **Custom setup** (answer 4 simple questions)
+
+Everything else is automatic.
 
 ---
 
@@ -44,8 +48,8 @@ Choose Mercedes sample (instant demo) or create your custom setup (7 questions).
 - **Channel-specific insights** - Provides relevant analysis based on channel context
 - **Industry-aware** - Adapts responses to your company's industry and topics
 
-### 🤖 Intelligent Setup Wizard
-- **7 simple questions** - we infer everything else
+### ⚙️ Intelligent Setup Wizard
+- **4 simple questions** - we infer everything else
 - **Industry-aware** - automatically creates contextual channels, topics, and roles
 - **Auto-generates** 15 team members, bot names, avatars, and more
 - **Natural language input** - answer questions conversationally
@@ -72,8 +76,8 @@ npm run start
 1. ✅ Installs dependencies (if needed)
 2. ✅ **Asks you to choose:**
    - 🚗 Use default Mercedes-Benz sample (instant launch)
-   - ⚙️ Create custom setup (answer 7 questions)
-3. ✅ Generates configuration
+   - ⚙️ Create custom setup (answer 4 simple questions)
+3. ✅ Generates configuration automatically
 4. ✅ Launches Slack at `http://localhost:5173`
 
 **Already have a custom setup?** It uses your existing configuration automatically.
@@ -82,7 +86,7 @@ npm run start
 
 ```bash
 npm install
-npm run setup    # Answer 7 questions
+npm run setup    # Answer 4 simple questions
 npm run generate # Generate your custom Slack
 npm run dev      # Launch
 ```
@@ -91,15 +95,14 @@ npm run dev      # Launch
 
 ## 📋 Setup Wizard
 
-The wizard asks just **7 questions**:
+The wizard asks just **4 simple questions**:
 
 1. **Company name** - e.g., "Acme Corp"
 2. **What your company does** - e.g., "We build cloud infrastructure"
 3. **Industry** - e.g., "Technology", "Automotive", "Finance"
-4. **Company size** - e.g., "200 employees", "startup", "large"
-5. **Headquarters location** - e.g., "San Francisco, CA"
-6. **Countries** - e.g., "US, Germany, India" (generates 15 team members)
-7. **Your name** - e.g., "John Doe"
+4. **Your name** - e.g., "John Doe"
+
+**That's it!** Everything else is automatically inferred and generated.
 
 ### What Gets Auto-Generated ✨
 
@@ -342,3 +345,4 @@ npm run start
 ```
 
 </div>
+

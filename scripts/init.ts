@@ -61,7 +61,7 @@ async function main() {
             value: 'default'
           },
           {
-            name: '⚙️  Create custom setup (answer 7 questions)',
+            name: '⚙️  Create custom setup (answer a few simple questions)',
             value: 'custom'
           }
         ],
