@@ -13,7 +13,7 @@ export default defineConfig({
   // Serve static files from `public/`. We'll copy repo `assets/` → `public/assets` via npm scripts.
   publicDir: 'public',
   server: {
-    port: 5180,
+    port: 3000,
     strictPort: false,
     host: true,
     open: true,

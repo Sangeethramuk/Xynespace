@@ -99,7 +99,7 @@ Here's what a real setup session looks like:
 ```bash
 $ npm run setup
 
-🚀 Welcome to the Slack Kit Setup Wizard!
+🚀 Welcome to the Vibe Slack Setup Wizard!
 
 This wizard will help you configure your Slack environment.
 

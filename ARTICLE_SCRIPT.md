@@ -2,11 +2,11 @@
 
 ## Introduction: The Problem with One-Size-Fits-All Communication Tools
 
-**[Screenshot: Side-by-side comparison of generic Slack vs. customized Slack Kit]**
+**[Screenshot: Side-by-side comparison of generic Slack vs. customized Vibe Slack]**
 
 When building demos, prototypes, or training materials, we often need a communication platform that reflects our specific company context—our industry, our team structure, our workflows. Generic Slack works great for real teams, but what if you need a Slack environment that's tailored to your company's unique needs? What if you want to showcase how AI assistants integrate into your workflows? What if you need realistic, contextual conversations that match your industry?
 
-That's why we built **Slack Kit**—a fully customizable, pixel-perfect Slack clone that adapts to your company's industry, team, and communication style in minutes, not days.
+That's why we built **Vibe Slack**—a fully customizable, pixel-perfect Slack clone that adapts to your company's industry, team, and communication style in minutes, not days.
 
 ---
 
@@ -27,7 +27,7 @@ We needed a solution that could:
 
 ### The Solution
 
-Slack Kit solves this with an intelligent setup wizard that asks just **7 questions** and infers everything else. Tell it your company name, what you do, and your industry—it handles the rest.
+Vibe Slack solves this with an intelligent setup wizard that asks just **7 questions** and infers everything else. Tell it your company name, what you do, and your industry—it handles the rest.
 
 ---
 
@@ -47,7 +47,7 @@ Everything else is automatic.
 
 ---
 
-## Core Features: What Makes Slack Kit Special
+## Core Features: What Makes Vibe Slack Special
 
 ### 1. Intelligent Setup Wizard: 7 Questions, Infinite Context
 
@@ -77,7 +77,7 @@ The wizard asks:
 
 **[Screenshot: Different industries showing different channel structures]**
 
-Slack Kit doesn't just create channels—it creates **contextually relevant** channels based on your industry:
+Vibe Slack doesn't just create channels—it creates **contextually relevant** channels based on your industry:
 
 **Automotive Example:**
 - `#autonomous-driving`
@@ -105,7 +105,7 @@ The system understands your industry and generates channels, topics, and convers
 
 **[Screenshot: Merc AI in 1:1 DM, channel posts, and @mention responses]**
 
-Slack Kit includes a fully integrated AI assistant that behaves like a real team member:
+Vibe Slack includes a fully integrated AI assistant that behaves like a real team member:
 
 **1:1 DM Conversations**
 - Dedicated chat with AI assistant
@@ -306,7 +306,7 @@ Slack Kit includes a fully integrated AI assistant that behaves like a real team
 
 ---
 
-## Use Cases: When Slack Kit Shines
+## Use Cases: When Vibe Slack Shines
 
 ### 1. Product Demos
 Show how your product integrates with team communication tools. Generate a realistic Slack environment that matches your target customer's industry.
@@ -345,7 +345,7 @@ Create visual documentation with realistic examples. Show how features work in c
 ## What Makes This Different
 
 ### 1. Intelligence Over Templates
-Instead of generic templates, Slack Kit uses intelligent inference to create contextually relevant environments.
+Instead of generic templates, Vibe Slack uses intelligent inference to create contextually relevant environments.
 
 ### 2. Industry Awareness
 The system understands different industries and generates appropriate channels, topics, and conversations.
@@ -443,9 +443,9 @@ Merc AI uses:
 
 **[Screenshot: Final overview of customized Slack]**
 
-Slack Kit proves that communication tools don't have to be one-size-fits-all. With intelligent setup, industry awareness, and realistic simulation, you can have a Slack environment that reflects your company's unique context in minutes.
+Vibe Slack proves that communication tools don't have to be one-size-fits-all. With intelligent setup, industry awareness, and realistic simulation, you can have a Slack environment that reflects your company's unique context in minutes.
 
-Whether you're building demos, creating training materials, or prototyping integrations, Slack Kit gives you the power to create realistic, contextual communication environments that match your needs.
+Whether you're building demos, creating training materials, or prototyping integrations, Vibe Slack gives you the power to create realistic, contextual communication environments that match your needs.
 
 **Ready to create your custom Slack environment?**
 

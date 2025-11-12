@@ -317,7 +317,7 @@ function inferChannels(description: string, industry: string): {types: string[],
 }
 
 async function setupWizard() {
-  console.log('\n🚀 Welcome to the Slack Kit Setup Wizard!\n')
+  console.log('\n🚀 Welcome to the Vibe Slack Setup Wizard!\n')
   console.log('This wizard will help you configure your Slack environment.\n')
   console.log('We\'ll ask just a few high-level questions and generate everything else for you.\n')
   console.log('💡 Tip: You can answer naturally! For example:')

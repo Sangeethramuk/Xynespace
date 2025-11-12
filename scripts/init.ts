@@ -35,7 +35,7 @@ function checkSetupData() {
 }
 
 async function main() {
-  console.log('\n🚀 Slack Kit - One-Command Setup\n')
+  console.log('\n🚀 Vibe Slack - One-Command Setup\n')
 
   // Step 1: Check and install dependencies
   if (!checkNodeModules()) {
@@ -54,7 +54,7 @@ async function main() {
       {
         type: 'list',
         name: 'setupChoice',
-        message: 'No custom setup found. What would you like to do?',
+        message: 'What would you like to do?',
         choices: [
           {
             name: '🚗 Use default Mercedes-Benz sample (instant launch)',

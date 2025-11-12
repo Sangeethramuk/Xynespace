@@ -1,6 +1,6 @@
 # Setup Wizard Guide
 
-This Slack Kit includes an intelligent setup wizard that asks just a few high-level questions and automatically generates everything else for you.
+This Vibe Slack includes an intelligent setup wizard that asks just a few high-level questions and automatically generates everything else for you.
 
 ## Quick Start
 

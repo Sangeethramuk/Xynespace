@@ -530,8 +530,9 @@ const getOwnerForUrl = (url: string): string => {
 
 /**
  * Detects embed links in message text and returns an array of embed configurations
+ * Only one embed per line is allowed - if multiple links are on the same line, only the first is returned
  * @param text - The message text to scan for embed links
- * @returns Array of embed configurations
+ * @returns Array of embed configurations (max one per line)
  */
 export const detectEmbedLinks = (text: string): EmbedConfig[] => {
   const embeds: EmbedConfig[] = []
@@ -539,16 +540,29 @@ export const detectEmbedLinks = (text: string): EmbedConfig[] => {
   // Include all embed types
   const displayableTypes: EmbedType[] = ['notion', 'figma', 'loom', 'jira', 'confluence']
   
-  // Iterate through all configured embed types
-  Object.values(EMBED_CONFIGS).forEach(config => {
-    // Only process displayable types
-    if (!displayableTypes.includes(config.type)) {
-      return
-    }
+  // Split text by lines to ensure only one embed per line
+  const lines = text.split(/\r?\n/)
+  
+  // Process each line separately
+  lines.forEach(line => {
+    let foundEmbedInLine = false
     
-    const matches = text.match(config.regex)
-    if (matches) {
-      matches.forEach(url => {
+    // Iterate through all configured embed types
+    Object.values(EMBED_CONFIGS).forEach(config => {
+      // Only process displayable types
+      if (!displayableTypes.includes(config.type)) {
+        return
+      }
+      
+      // If we already found an embed in this line, skip
+      if (foundEmbedInLine) {
+        return
+      }
+      
+      const matches = line.match(config.regex)
+      if (matches && matches.length > 0) {
+        // Only take the first match from this line
+        const url = matches[0]
         const seed = getUrlSeed(url)
         const title = config.titleExtractor(url, seed)
         const owner = getOwnerForUrl(url)
@@ -559,8 +573,10 @@ export const detectEmbedLinks = (text: string): EmbedConfig[] => {
           title, 
           owner 
         })
-      })
-    }
+        
+        foundEmbedInLine = true
+      }
+    })
   })
   
   return embeds

@@ -153,9 +153,12 @@ a[href]:not(.no-underline-link):hover {
 }
 
 /* Ensure <em> tags in messages use Lato Italic font */
-.message-content em {
-  font-family: 'Lato', sans-serif;
-  font-style: italic;
+.message-content em,
+.message-content i,
+.message-content [style*="font-style: italic"],
+.message-content [style*="font-style:italic"] {
+  font-family: 'Lato', sans-serif !important;
+  font-style: italic !important;
   font-weight: 400;
 }
 

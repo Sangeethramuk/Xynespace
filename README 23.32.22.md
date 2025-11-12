@@ -1,4 +1,4 @@
-# 🚀 Slack Kit
+# 🚀 Vibe Slack
 
 > A pixel-perfect, fully customizable Slack clone that adapts to your company's industry, team, and communication style.
 

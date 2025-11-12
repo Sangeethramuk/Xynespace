@@ -4508,15 +4508,16 @@ Together, we're building not just great cars, but a sustainable future. Thank yo
                               background: currentTheme.colors.sidebarBackground,
                               border: `1px solid ${currentTheme.colors.border}`,
                               borderRadius: 8,
-                              padding: '8px',
-                              display: 'flex',
+                              padding: '8px 4px 8px 8px',
+                              display: 'grid',
+                              gridTemplateColumns: 'repeat(5, 32px)',
+                              gridTemplateRows: 'repeat(2, 32px)',
                               gap: 4,
-                              flexWrap: 'wrap',
+                              width: 'fit-content',
                               zIndex: 100,
                               boxShadow: currentTheme.type === 'dark' 
                                 ? '0 4px 12px rgba(0, 0, 0, 0.3)' 
                                 : '0 4px 12px rgba(0, 0, 0, 0.1)',
-                              minWidth: 200,
                             }}
                           >
                             {commonEmojis.map(emoji => (
