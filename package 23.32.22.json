@@ -8,6 +8,7 @@
     "dev": "vite",
     "prebuild": "rm -rf public/assets && mkdir -p public && cp -R assets public/assets",
     "build": "tsc -b && vite build",
+    "postbuild": "cd dist && if [ -f 'index 23.32.22.html' ]; then mv 'index 23.32.22.html' index.html; fi",
     "lint": "eslint .",
     "preview": "vite preview",
     "setup": "tsx scripts/setup.ts",
