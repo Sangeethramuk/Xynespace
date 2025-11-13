@@ -113,9 +113,9 @@ export default function CloseIncidentModal({ isOpen, onClose, onConfirm }: Close
         </div>
 
         <div style={styles.footer}>
-          <div style={styles.workdayBotLine} aria-live="polite" aria-atomic="true">
-            <img src="/assets/workday.png" alt="" width={18} height={18} style={styles.workdayBotIcon} />
-            <span style={styles.workdayBotLabel}>Workday Bot</span>
+          <div style={styles.juspayAiLine} aria-live="polite" aria-atomic="true">
+            <img src="/assets/merc-ai.png" alt="" width={18} height={18} style={styles.juspayAiIcon} />
+            <span style={styles.juspayAiLabel}>Juspay AI</span>
             <span style={styles.cyclerContainer}>
               {settled ? (
                 <span style={{ ...styles.cyclerText, fontWeight: 700 }}>has verified checks.</span>
@@ -225,7 +225,7 @@ const styles: Record<string, React.CSSProperties> = {
     padding: '12px 16px',
     borderTop: '1px solid var(--border, #e5e7eb)',
   },
-  workdayBotLine: {
+  juspayAiLine: {
     display: 'inline-flex',
     alignItems: 'baseline',
     lineHeight: 1.25,
@@ -235,7 +235,7 @@ const styles: Record<string, React.CSSProperties> = {
     textOverflow: 'ellipsis',
     flex: 1,
   },
-  workdayBotIcon: {
+  juspayAiIcon: {
     width: 18,
     height: 18,
     marginRight: 8,
@@ -244,7 +244,7 @@ const styles: Record<string, React.CSSProperties> = {
     position: 'relative',
     top: '0.2em',
   },
-  workdayBotLabel: { fontWeight: 700, marginRight: 4, flex: '0 0 auto', lineHeight: 1.25, position: 'relative', top: '-2px' },
+  juspayAiLabel: { fontWeight: 700, marginRight: 4, flex: '0 0 auto', lineHeight: 1.25, position: 'relative', top: '-2px' },
   cyclerContainer: {
     display: 'inline-block',
     height: '1.25em',

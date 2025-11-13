@@ -61,7 +61,7 @@ type Theme = {
 }
 
 export default function SlackPage() {
-  const [selectedChat, setSelectedChat] = useState<string>('eqe-launch')
+  const [selectedChat, setSelectedChat] = useState<string>('hyperswitch-core')
   const [chatMessages, setChatMessages] = useState<Record<string, SlackMsg[]>>({})
   const slackRootRef = useRef<HTMLDivElement | null>(null)
   const prevSelectedChatRef = useRef<string>(selectedChat)
@@ -90,17 +90,17 @@ export default function SlackPage() {
   
   // State for online status - tracks which users are online/offline
   const [onlineStatus, setOnlineStatus] = useState<Record<string, boolean>>({
-    'workday-bot': true,
-    'merc-ai': true,
-    'alice': false,
-    'bob': false,
-    'carol': true,
-    'eve': false,
-    'james': false,
-    'priya': false,
-    'david': false,
-    'sarah': true,
-    'mike': true,
+    'juspay-ai': true,
+    'ankur': true,
+    'sudhirr-nanda': true,
+    'akhil': false,
+    'sakshi-gupta': true,
+    'drishtant-kaushal': false,
+    'mudit-bhutani': true,
+    'pranav-jang-bahadur': true,
+    'meghana-kankara': false,
+    'harshita': true,
+    'rishabh-pandey': false,
   })
   
   // Theme state - load from theme.json
@@ -169,7 +169,7 @@ export default function SlackPage() {
   // Helper to get avatar from people data
   const getAvatar = (name: string): string => {
     const person = getPerson(name)
-    return person?.avatar || '/assets/avatar.png'
+    return person?.avatar || '/assets/avatar.jpeg'
   }
 
   // Helper to get current user (James McGill)
@@ -190,16 +190,17 @@ export default function SlackPage() {
   // Helper to get person name from chat ID
   const getPersonNameFromChatId = (chatId: string): string | null => {
     const chatMap: Record<string, string> = {
-      'merc-ai': 'Merc AI',
-      'alice': 'Sophie Dubois',
-      'bob': 'Marco Rossi',
-      'carol': 'Priya Patel',
-      'eve': 'Michael Johnson',
-      'james': 'Klaus Müller',
-      'priya': 'Ananya Reddy',
-      'david': 'David Chen',
-      'sarah': 'Sarah Williams',
-      'mike': 'Alessandro Bianchi',
+      'juspay-ai': 'Juspay AI',
+      'ankur': 'Ankur',
+      'sudhirr-nanda': 'Sudhirr Nanda',
+      'akhil': 'Akhil',
+      'sakshi-gupta': 'Sakshi Gupta',
+      'drishtant-kaushal': 'Drishtant Kaushal',
+      'mudit-bhutani': 'Mudit Bhutani',
+      'pranav-jang-bahadur': 'Pranav Jang Bahadur',
+      'meghana-kankara': 'Meghana Kankara',
+      'harshita': 'Harshita',
+      'rishabh-pandey': 'Rishabh Pandey',
     }
     return chatMap[chatId] || null
   }
@@ -466,33 +467,32 @@ export default function SlackPage() {
   // Initialize unread counts from static data
   useEffect(() => {
     const initialUnreads: Record<string, number> = {
-      'eqe-launch': 3,
-      'sales-updates': 0,
-      'service-network': 5,
-      'workday-bot': 0,
-      'alice': 0,
-      'bob': 2,
-      'carol': 0,
-      'eve': 0,
-      'james': 1,
-      'priya': 0,
-      'david': 0,
-      'sarah': 3,
-      'mike': 0,
+      'hyperswitch-core': 3,
+      'hyperswitch-growth': 0,
+      'click2pay': 5,
+      'ankur': 0,
+      'sudhirr-nanda': 2,
+      'akhil': 0,
+      'sakshi-gupta': 0,
+      'drishtant-kaushal': 1,
+      'mudit-bhutani': 0,
+      'pranav-jang-bahadur': 0,
+      'meghana-kankara': 3,
+      'harshita': 0,
+      'rishabh-pandey': 0,
       'group-1': 0,
       'group-2': 2,
       'group-3': 0,
-      'group-4': 1,
       'group-5': 0,
       'general': 0,
-      'eq-series': 2,
-      'new-launches': 0,
-      'mbux-development': 0,
-      'autonomous-driving': 1,
-      'vehicle-connectivity': 0,
-      'battery-tech': 0,
-      'engine-development': 0,
-      'safety-systems': 4,
+      'hyperswitch-dashboard': 2,
+      'hyperswitch-sdk': 0,
+      'ai-powered-dev': 0,
+      'hyperswitch-random': 1,
+      'juspay-food-and-facilities': 0,
+      'lost-and-found': 0,
+      'random': 0,
+      'payment-security': 4,
       'sales-channels': 0,
       'service-centers': 0,
       'dealer-network': 0,
@@ -507,62 +507,59 @@ export default function SlackPage() {
       'germany-team': 0,
       'france-team': 0,
       'italy-team': 0,
+      'juspay-ai': 0,
     }
     setUnreadCounts(initialUnreads)
   }, [])
 
   // Chat list items organized by sections (unread counts come from state)
   const starredChats: ChatItem[] = [
-    { id: 'eqe-launch', name: '#eqe-launch', unread: unreadCounts['eqe-launch'] || 0, type: 'starred' },
-    { id: 'sales-updates', name: '#sales-updates', unread: unreadCounts['sales-updates'] || 0, type: 'starred', isPrivate: true },
-    { id: 'service-network', name: '#service-network', unread: unreadCounts['service-network'] || 0, type: 'starred' },
+    { id: 'hyperswitch-core', name: '#hyperswitch-core', unread: unreadCounts['hyperswitch-core'] || 0, type: 'starred' },
+    { id: 'hyperswitch-growth', name: '#hyperswitch-growth', unread: unreadCounts['hyperswitch-growth'] || 0, type: 'starred', isPrivate: true },
+    { id: 'click2pay', name: '#click2pay', unread: unreadCounts['click2pay'] || 0, type: 'starred' },
   ]
   
   // Get starred chat IDs to filter them out from other sections
   const starredChatIds = new Set(starredChats.map(c => c.id))
   
   const dmChats: ChatItem[] = [
-    { id: 'workday-bot', name: 'Workday Bot', unread: unreadCounts['workday-bot'] || 0, type: 'dm', avatar: getAvatar('Workday Bot'), isOnline: onlineStatus['workday-bot'] ?? true },
-    { id: 'merc-ai', name: 'Merc AI', unread: unreadCounts['merc-ai'] || 0, type: 'dm', avatar: getAvatar('Merc AI'), isOnline: onlineStatus['merc-ai'] ?? true },
-    { id: 'alice', name: 'Sophie Dubois', unread: unreadCounts['alice'] || 0, type: 'dm', avatar: getAvatar('Sophie Dubois'), isOnline: onlineStatus['alice'] ?? false },
-    { id: 'bob', name: 'Marco Rossi', unread: unreadCounts['bob'] || 0, type: 'dm', avatar: getAvatar('Marco Rossi'), isOnline: onlineStatus['bob'] ?? false },
-    { id: 'carol', name: 'Priya Patel', unread: unreadCounts['carol'] || 0, type: 'dm', avatar: getAvatar('Priya Patel'), isOnline: onlineStatus['carol'] ?? true },
-    { id: 'eve', name: 'Michael Johnson', unread: unreadCounts['eve'] || 0, type: 'dm', avatar: getAvatar('Michael Johnson'), isOnline: onlineStatus['eve'] ?? false },
-    { id: 'priya', name: 'Ananya Reddy', unread: unreadCounts['priya'] || 0, type: 'dm', avatar: getAvatar('Ananya Reddy'), isOnline: onlineStatus['priya'] ?? false },
-    { id: 'david', name: 'David Chen', unread: unreadCounts['david'] || 0, type: 'dm', avatar: getAvatar('David Chen'), isOnline: onlineStatus['david'] ?? false },
-    { id: 'sarah', name: 'Sarah Williams', unread: unreadCounts['sarah'] || 0, type: 'dm', avatar: getAvatar('Sarah Williams'), statusEmoji: '🎉', isOnline: onlineStatus['sarah'] ?? true },
-    { id: 'mike', name: 'Alessandro Bianchi', unread: unreadCounts['mike'] || 0, type: 'dm', avatar: getAvatar('Alessandro Bianchi'), statusEmoji: '☕', isOnline: onlineStatus['mike'] ?? true },
-    { id: 'group-1', name: 'Sophie Dubois, Marco Rossi, Priya Patel', unread: unreadCounts['group-1'] || 0, type: 'dm' },
-    { id: 'group-2', name: 'Emma Schmidt, Thomas Weber, Ananya Reddy', unread: unreadCounts['group-2'] || 0, type: 'dm' },
-    { id: 'group-3', name: 'David Chen, Sarah Williams, Alessandro Bianchi', unread: unreadCounts['group-3'] || 0, type: 'dm' },
-    { id: 'group-4', name: 'Workday Bot, Sophie Dubois, Marco Rossi', unread: unreadCounts['group-4'] || 0, type: 'dm' },
-    { id: 'group-5', name: 'Emma Wilson, Alex Thompson, Lisa Anderson', unread: unreadCounts['group-5'] || 0, type: 'dm' },
-  ].filter(chat => chat.name !== getCurrentUser) // Filter out the current user from DM list
+    { id: 'juspay-ai', name: 'Juspay AI', unread: unreadCounts['juspay-ai'] || 0, type: 'dm', avatar: getAvatar('Juspay AI'), isOnline: onlineStatus['juspay-ai'] ?? true },
+    { id: 'ankur', name: 'Ankur', unread: unreadCounts['ankur'] || 0, type: 'dm', avatar: getAvatar('Ankur'), isOnline: onlineStatus['ankur'] ?? true },
+    { id: 'sudhirr-nanda', name: 'Sudhirr Nanda', unread: unreadCounts['sudhirr-nanda'] || 0, type: 'dm', avatar: getAvatar('Sudhirr Nanda'), isOnline: onlineStatus['sudhirr-nanda'] ?? true },
+    { id: 'akhil', name: 'Akhil', unread: unreadCounts['akhil'] || 0, type: 'dm', avatar: getAvatar('Akhil'), isOnline: onlineStatus['akhil'] ?? false },
+    { id: 'sakshi-gupta', name: 'Sakshi Gupta', unread: unreadCounts['sakshi-gupta'] || 0, type: 'dm', avatar: getAvatar('Sakshi Gupta'), isOnline: onlineStatus['sakshi-gupta'] ?? true },
+    { id: 'drishtant-kaushal', name: 'Drishtant Kaushal', unread: unreadCounts['drishtant-kaushal'] || 0, type: 'dm', avatar: getAvatar('Drishtant Kaushal'), isOnline: onlineStatus['drishtant-kaushal'] ?? false },
+    { id: 'mudit-bhutani', name: 'Mudit Bhutani', unread: unreadCounts['mudit-bhutani'] || 0, type: 'dm', avatar: getAvatar('Mudit Bhutani'), isOnline: onlineStatus['mudit-bhutani'] ?? true },
+    { id: 'pranav-jang-bahadur', name: 'Pranav Jang Bahadur', unread: unreadCounts['pranav-jang-bahadur'] || 0, type: 'dm', avatar: getAvatar('Pranav Jang Bahadur'), isOnline: onlineStatus['pranav-jang-bahadur'] ?? true },
+    { id: 'meghana-kankara', name: 'Meghana Kankara', unread: unreadCounts['meghana-kankara'] || 0, type: 'dm', avatar: getAvatar('Meghana Kankara'), statusEmoji: '🎉', isOnline: onlineStatus['meghana-kankara'] ?? false },
+    { id: 'harshita', name: 'Harshita', unread: unreadCounts['harshita'] || 0, type: 'dm', avatar: getAvatar('Harshita'), statusEmoji: '☕', isOnline: onlineStatus['harshita'] ?? true },
+    { id: 'rishabh-pandey', name: 'Rishabh Pandey', unread: unreadCounts['rishabh-pandey'] || 0, type: 'dm', avatar: getAvatar('Rishabh Pandey'), isOnline: onlineStatus['rishabh-pandey'] ?? false },
+    { id: 'group-1', name: 'Akhil, Sakshi Gupta', unread: unreadCounts['group-1'] || 0, type: 'dm' },
+    { id: 'group-2', name: 'Ankita Saha, Hetvi Kothari, Mudit Bhutani', unread: unreadCounts['group-2'] || 0, type: 'dm' },
+    { id: 'group-3', name: 'Arnab, Deepanshu, Harshita', unread: unreadCounts['group-3'] || 0, type: 'dm' },
+    { id: 'group-5', name: 'Spoorthi Ramesh, Abhijeet, Shruti Karmarkar', unread: unreadCounts['group-5'] || 0, type: 'dm' },
+  ].filter(chat => chat.name !== getCurrentUser)
   
   const channelChats: ChatItem[] = ([
     { id: 'general', name: '#general', unread: unreadCounts['general'] || 0, type: 'channel' as const },
-    { id: 'eq-series', name: '#eq-series', unread: unreadCounts['eq-series'] || 0, type: 'channel' as const },
-    { id: 'new-launches', name: '#new-launches', unread: unreadCounts['new-launches'] || 0, type: 'channel' as const },
-    { id: 'mbux-development', name: '#mbux-development', unread: unreadCounts['mbux-development'] || 0, type: 'channel' as const },
-    { id: 'autonomous-driving', name: '#autonomous-driving', unread: unreadCounts['autonomous-driving'] || 0, type: 'channel' as const },
-    { id: 'vehicle-connectivity', name: '#vehicle-connectivity', unread: unreadCounts['vehicle-connectivity'] || 0, type: 'channel' as const },
-    { id: 'battery-tech', name: '#battery-tech', unread: unreadCounts['battery-tech'] || 0, type: 'channel' as const },
-    { id: 'engine-development', name: '#engine-development', unread: unreadCounts['engine-development'] || 0, type: 'channel' as const },
-    { id: 'safety-systems', name: '#safety-systems', unread: unreadCounts['safety-systems'] || 0, type: 'channel' as const },
-    { id: 'sales-channels', name: '#sales-channels', unread: unreadCounts['sales-channels'] || 0, type: 'channel' as const },
-    { id: 'service-centers', name: '#service-centers', unread: unreadCounts['service-centers'] || 0, type: 'channel' as const },
-    { id: 'dealer-network', name: '#dealer-network', unread: unreadCounts['dealer-network'] || 0, type: 'channel' as const },
-    { id: 'customer-support', name: '#customer-support', unread: unreadCounts['customer-support'] || 0, type: 'channel' as const },
-    { id: 'warranty-services', name: '#warranty-services', unread: unreadCounts['warranty-services'] || 0, type: 'channel' as const },
-    { id: 'parts-logistics', name: '#parts-logistics', unread: unreadCounts['parts-logistics'] || 0, type: 'channel' as const },
-    { id: 'quality-assurance', name: '#quality-assurance', unread: unreadCounts['quality-assurance'] || 0, type: 'channel' as const },
-    { id: 'testing-prototypes', name: '#testing-prototypes', unread: unreadCounts['testing-prototypes'] || 0, type: 'channel' as const },
-    { id: 'design-studio', name: '#design-studio', unread: unreadCounts['design-studio'] || 0, type: 'channel' as const },
-    { id: 'marketing-campaigns', name: '#marketing-campaigns', unread: unreadCounts['marketing-campaigns'] || 0, type: 'channel' as const },
+    { id: 'hyperswitch-dashboard', name: '#hyperswitch-dashboard', unread: unreadCounts['hyperswitch-dashboard'] || 0, type: 'channel' as const },
+    { id: 'hyperswitch-sdk', name: '#hyperswitch-sdk', unread: unreadCounts['hyperswitch-sdk'] || 0, type: 'channel' as const },
+    { id: 'ai-powered-dev', name: '#ai-powered-dev', unread: unreadCounts['ai-powered-dev'] || 0, type: 'channel' as const },
+    { id: 'hyperswitch-random', name: '#hyperswitch-random', unread: unreadCounts['hyperswitch-random'] || 0, type: 'channel' as const },
+    { id: 'juspay-food-and-facilities', name: '#juspay-food-and-facilities', unread: unreadCounts['juspay-food-and-facilities'] || 0, type: 'channel' as const },
+    { id: 'lost-and-found', name: '#lost-and-found', unread: unreadCounts['lost-and-found'] || 0, type: 'channel' as const },
+    { id: 'random', name: '#random', unread: unreadCounts['random'] || 0, type: 'channel' as const },
+    { id: 'payment-security', name: '#payment-security', unread: unreadCounts['payment-security'] || 0, type: 'channel' as const },
+    { id: 'fraud-detection', name: '#fraud-detection', unread: unreadCounts['fraud-detection'] || 0, type: 'channel' as const },
+    { id: 'transaction-monitoring', name: '#transaction-monitoring', unread: unreadCounts['transaction-monitoring'] || 0, type: 'channel' as const },
+    { id: 'api-development', name: '#api-development', unread: unreadCounts['api-development'] || 0, type: 'channel' as const },
     { id: 'product-planning', name: '#product-planning', unread: unreadCounts['product-planning'] || 0, type: 'channel' as const, isPrivate: true },
-    { id: 'germany-team', name: '#germany-team', unread: unreadCounts['germany-team'] || 0, type: 'channel' as const },
-    { id: 'france-team', name: '#france-team', unread: unreadCounts['france-team'] || 0, type: 'channel' as const },
-    { id: 'italy-team', name: '#italy-team', unread: unreadCounts['italy-team'] || 0, type: 'channel' as const },
+    { id: 'engineering', name: '#engineering', unread: unreadCounts['engineering'] || 0, type: 'channel' as const },
+    { id: 'backend', name: '#backend', unread: unreadCounts['backend'] || 0, type: 'channel' as const },
+    { id: 'frontend', name: '#frontend', unread: unreadCounts['frontend'] || 0, type: 'channel' as const },
+    { id: 'devops', name: '#devops', unread: unreadCounts['devops'] || 0, type: 'channel' as const },
+    { id: 'incidents', name: '#incidents', unread: unreadCounts['incidents'] || 0, type: 'channel' as const },
+    { id: 'on-call', name: '#on-call', unread: unreadCounts['on-call'] || 0, type: 'channel' as const },
   ] as ChatItem[]).filter(chat => !starredChatIds.has(chat.id))
 
   // Generate realistic DM messages with natural conversation flow
@@ -634,71 +631,71 @@ export default function SlackPage() {
   // Sophisticated message generator with realistic variation, length, and channel-specific content
   const generateRealisticMessage = (chatId: string, chatName: string, isChannel: boolean, isGroupDM: boolean, pick: <T,>(arr: T[]) => T): { who: string, text: string } => {
     const channelMessageGenerators: Record<string, () => { who: string, text: string }> = {
-      'eqe-launch': () => {
+      'hyperswitch-core': () => {
         const scenarios = [
           {
-            who: pick(['Klaus Müller', 'Sophie Dubois', 'Marco Rossi']),
-            text: `EQE production numbers: ${Math.floor(Math.random() * 2000) + 10000} units delivered this month. ${pick(['Customer feedback excellent', 'Quality metrics on target', 'Sales exceeding expectations'])}.`
+            who: pick(['Ankur', 'Sudhirr Nanda', 'Akhil']),
+            text: `Hyperswitch core ${pick(['v2.0 release deployed successfully', 'payment processing latency improved by 30%', 'new payment method integrations complete'])}. ${pick(['All tests passing', 'Performance excellent', 'Ready for production'])}.`
           },
           {
-            who: pick(['Priya Patel', 'Michael Johnson', 'Emma Schmidt']),
-            text: `EQE launch event ${pick(['scheduled', 'completed successfully', 'in final preparation'])}. ${pick(['Press materials ready', 'Dealer training complete', 'Marketing campaign live'])}.`
+            who: pick(['Sakshi Gupta', 'Drishtant Kaushal', 'Mudit Bhutani']),
+            text: `Payment gateway uptime: ${pick(['99.99% this month', 'zero downtime incidents', 'all systems stable'])}. ${pick(['Transaction volume up 25%', 'Success rate at 98.5%', 'Great performance'])}.`
           },
           {
-            who: pick(['Thomas Weber', 'Ananya Reddy', 'David Chen']),
-            text: `Customer pre-orders for EQE: ${Math.floor(Math.random() * 5000) + 10000} units. ${pick(['Exceeding targets', 'Strong demand', 'Market response positive'])}.`
+            who: pick(['Pranav Jang Bahadur', 'Meghana Kankara', 'Harshita']),
+            text: `Core API ${pick(['rate limiting implemented', 'authentication enhanced', 'error handling improved'])}. ${pick(['Security audit passed', 'Performance optimized', 'Ready for scale'])}.`
           },
         ]
         return pick(scenarios)
       },
-      'sales-updates': () => {
+      'hyperswitch-growth': () => {
         const scenarios = [
           {
-            who: pick(['Emma Schmidt', 'Thomas Weber', 'Ananya Reddy']),
-            text: `Q2 sales targets ${pick(['exceeded by 12%', 'on track', 'ahead of schedule'])}. ${pick(['Strong performance across all regions', 'EQ series leading growth', 'Customer satisfaction high'])}.`
+            who: pick(['Meghana Kankara', 'Harshita', 'Rishabh Pandey']),
+            text: `Q2 growth metrics ${pick(['exceeded by 15%', 'on track', 'ahead of schedule'])}. ${pick(['New merchant onboarding up 40%', 'Transaction volume growth strong', 'Customer satisfaction high'])}.`
           },
           {
-            who: pick(['David Chen', 'Sarah Williams', 'Alessandro Bianchi']),
-            text: `Sales metrics: ${pick(['EQ series up 35% YoY', 'Customer satisfaction at 4.8/5', 'Dealer network expansion successful'])}. ${pick(['Excellent quarter', 'Great results', 'Strong performance'])}.`
+            who: pick(['Ankur', 'Sudhirr Nanda', 'Akhil']),
+            text: `Growth initiatives: ${pick(['New payment methods added', 'Merchant acquisition up 35% YoY', 'Market expansion successful'])}. ${pick(['Excellent quarter', 'Great results', 'Strong performance'])}.`
           },
         ]
         return pick(scenarios)
       },
-      'service-network': () => {
+      'click2pay': () => {
         const scenarios = [
           {
-            who: pick(['David Chen', 'Sarah Williams', 'Alessandro Bianchi']),
-            text: `Service center expansion: ${Math.floor(Math.random() * 10) + 10} new locations ${pick(['opening this quarter', 'now operational', 'in planning phase'])}.`
+            who: pick(['Sakshi Gupta', 'Drishtant Kaushal', 'Mudit Bhutani']),
+            text: `Click2Pay ${pick(['checkout success rate improved to 95%', 'new features deployed', 'user experience enhanced'])}.`
           },
           {
-            who: pick(['Klaus Müller', 'Sophie Dubois']),
-            text: `Customer service response time ${pick(['improved by 40%', 'at target levels', 'exceeding expectations'])} with new AI tools. ${pick(['Customer satisfaction up', 'Efficiency improved', 'Great progress'])}.`
+            who: pick(['Ankur', 'Sudhirr Nanda']),
+            text: `Express checkout ${pick(['adoption up 40%', 'conversion rate improved', 'customer feedback positive'])} with new optimizations. ${pick(['Great progress', 'Excellent results', 'On track'])}.`
           },
         ]
         return pick(scenarios)
       },
-      'mbux-development': () => {
+      'hyperswitch-dashboard': () => {
         const scenarios = [
           {
-            who: pick(['David Chen', 'Sarah Williams', 'Alessandro Bianchi']),
-            text: `MBUX ${pick(['3.0 interface testing complete', 'voice recognition improved to 98.5%', 'over-the-air updates ready'])}. ${pick(['All features validated', 'Performance excellent', 'Ready for deployment'])}.`
+            who: pick(['Pranav Jang Bahadur', 'Meghana Kankara', 'Harshita']),
+            text: `Dashboard ${pick(['v3.0 released', 'new analytics features added', 'performance monitoring enhanced'])}. ${pick(['All features validated', 'Performance excellent', 'Ready for users'])}.`
           },
           {
-            who: pick(['Klaus Müller', 'Sophie Dubois', 'Marco Rossi']),
-            text: `Hey <span style="color: #1D9BD1 !important; font-weight: 600;">@Merc AI</span>, can you help ${pick(['optimize the MBUX response time', 'analyze voice recognition accuracy', 'review the update system performance'])}?`
+            who: pick(['Ankur', 'Sudhirr Nanda', 'Akhil']),
+            text: `Hey <span style="color: #1D9BD1 !important; font-weight: 600;">@Juspay AI</span>, can you help ${pick(['optimize the dashboard load time', 'analyze transaction metrics', 'review the analytics performance'])}?`
           },
         ]
         return pick(scenarios)
       },
-      'autonomous-driving': () => {
+      'ai-powered-dev': () => {
         const scenarios = [
           {
-            who: pick(['Priya Patel', 'Michael Johnson', 'Emma Schmidt']),
-            text: `Level 3 autonomous driving tests ${pick(['completed successfully', 'in progress', 'showing excellent results'])} on ${pick(['German highways', 'test tracks', 'public roads'])}.`
+            who: pick(['Sakshi Gupta', 'Drishtant Kaushal', 'Mudit Bhutani']),
+            text: `AI fraud detection ${pick(['accuracy improved to 99.2%', 'model retrained successfully', 'false positive rate reduced'])}.`
           },
           {
-            who: pick(['Thomas Weber', 'Ananya Reddy']),
-            text: `<span style="color: #1D9BD1 !important; font-weight: 600;">@Merc AI</span> what are the ${pick(['key safety metrics', 'performance benchmarks', 'validation criteria'])} we should focus on?`
+            who: pick(['Pranav Jang Bahadur', 'Meghana Kankara']),
+            text: `<span style="color: #1D9BD1 !important; font-weight: 600;">@Juspay AI</span> what are the ${pick(['key fraud detection metrics', 'performance benchmarks', 'model accuracy targets'])} we should focus on?`
           },
         ]
         return pick(scenarios)
@@ -962,27 +959,27 @@ export default function SlackPage() {
     const endDate = new Date()
     endDate.setHours(17, 0, 0, 0) // End of today
     
-    // Early return for merc-ai DM - return AI assistant conversation history
-    if (chatId === 'merc-ai') {
+    // Early return for juspay-ai DM - return AI assistant conversation history
+    if (chatId === 'juspay-ai') {
       const historicalMessages: SlackMsg[] = []
       
-      // Add conversation history with Merc AI (helpful AI assistant)
+      // Add conversation history with Juspay AI (helpful AI assistant)
       const conversationTopics = [
         {
           user: currentUserName,
-          ai: 'Hello! I\'m Merc AI, your Mercedes-Benz AI assistant. I can help with technical questions, data analysis, and provide insights about our systems. How can I assist you today?'
+          ai: 'Hello! I\'m Juspay AI, your payment technology AI assistant. I can help with technical questions, payment analytics, fraud detection insights, and provide analysis about our payment systems. How can I assist you today?'
         },
         {
           user: currentUserName,
-          ai: 'I can help analyze MBUX performance metrics, review autonomous driving system data, optimize battery management systems, and provide insights on vehicle connectivity. What would you like to explore?'
+          ai: 'I can help analyze payment gateway performance metrics, review transaction data, optimize payment processing systems, and provide insights on fraud detection. What would you like to explore?'
         },
         {
           user: currentUserName,
-          ai: 'Based on the latest telemetry data, our MBUX system is performing at 98.5% uptime. The voice recognition accuracy has improved by 12% since last quarter. Would you like me to dive deeper into any specific metrics?'
+          ai: 'Based on the latest transaction data, our payment gateway is performing at 99.99% uptime. The payment success rate has improved by 2.5% since last quarter. Would you like me to dive deeper into any specific metrics?'
         },
         {
           user: currentUserName,
-          ai: 'I\'ve analyzed the autonomous driving test results. Sensor fusion accuracy is at 99.7%, which exceeds our target of 99.5%. The system is ready for the next phase of testing.'
+          ai: 'I\'ve analyzed the fraud detection system results. Detection accuracy is at 99.2%, which exceeds our target of 99%. The system is ready for the next phase of optimization.'
         }
       ]
       
@@ -1004,21 +1001,21 @@ export default function SlackPage() {
         
         // User message
         historicalMessages.push({
-          id: `merc-ai-user-${i}`,
+          id: `juspay-ai-user-${i}`,
           who: topic.user,
-          text: i === 0 ? 'Hey Merc AI, can you help me understand our current system performance?' : 
+          text: i === 0 ? 'Hey Juspay AI, can you help me understand our current payment gateway performance?' : 
                 i === 1 ? 'What kind of insights can you provide?' :
-                i === 2 ? 'Tell me about MBUX performance' :
-                'What about autonomous driving systems?',
+                i === 2 ? 'Tell me about payment processing performance' :
+                'What about fraud detection systems?',
           when: msgTime.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })
         })
         
-        // Merc AI response (slightly later)
+        // Juspay AI response (slightly later)
         const responseTime = new Date(msgTime)
         responseTime.setMinutes(responseTime.getMinutes() + 2)
         historicalMessages.push({
-          id: `merc-ai-ai-${i}`,
-          who: 'Merc AI',
+          id: `juspay-ai-ai-${i}`,
+          who: 'Juspay AI',
           text: topic.ai,
           when: responseTime.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })
         })
@@ -1027,8 +1024,8 @@ export default function SlackPage() {
       return historicalMessages
     }
     
-    // Early return for workday-bot DM - return historical approval messages
-    if (chatId === 'workday-bot') {
+    // Early return for juspay-ai DM - return historical approval messages
+    if (chatId === 'juspay-ai') {
       const historicalMessages: SlackMsg[] = []
       
       // Add 4 historical approval messages spaced out over time (oldest to newest)
@@ -1078,8 +1075,8 @@ export default function SlackPage() {
         }
         
         historicalMessages.push({
-          id: `workday-historical-${i}-${Date.now()}`,
-          who: 'Workday Bot',
+          id: `juspay-ai-historical-${i}-${Date.now()}`,
+          who: 'Juspay AI',
           text: messageText,
           when: msgTime.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }),
           actions: [
@@ -1308,15 +1305,15 @@ Together, we're building not just great cars, but a sustainable future. Thank yo
           ['David Chen', 'MBUX 3.0 interface testing complete. All features validated.'],
           ['Sarah Williams', 'Voice recognition accuracy improved to 98.5% in latest build.'],
           ['Alessandro Bianchi', 'Over-the-air update system ready for deployment.'],
-          ['Klaus Müller', 'Hey <span style="color: #1D9BD1 !important; font-weight: 600;">@Merc AI</span>, can you help optimize the MBUX response time?'],
-          ['Merc AI', 'Based on current telemetry data, I recommend optimizing the rendering pipeline. The MBUX interface can achieve 15% faster response times by implementing GPU-accelerated rendering. I\'ve identified 3 specific bottlenecks in the current implementation.'],
+          ['Klaus Müller', 'Hey <span style="color: #1D9BD1 !important; font-weight: 600;">@Juspay AI</span>, can you help optimize the MBUX response time?'],
+          ['Juspay AI', 'Based on current telemetry data, I recommend optimizing the rendering pipeline. The MBUX interface can achieve 15% faster response times by implementing GPU-accelerated rendering. I\'ve identified 3 specific bottlenecks in the current implementation.'],
         ],
         'autonomous-driving': [
           ['Priya Patel', 'Level 3 autonomous driving tests completed successfully on German highways.'],
           ['Michael Johnson', 'Regulatory approval process initiated in 5 European countries.'],
           ['Emma Schmidt', 'Safety validation: 1 million test kilometers completed without incidents.'],
-          ['Thomas Weber', '<span style="color: #1D9BD1 !important; font-weight: 600;">@Merc AI</span> what are the key safety metrics we should focus on?'],
-          ['Merc AI', 'For Level 3 autonomous systems, critical safety metrics include: sensor fusion accuracy (target: >99.9%), decision-making latency (<100ms), and fail-safe activation time (<50ms). Current system performance shows 99.7% sensor fusion accuracy. Recommendation: enhance LiDAR redundancy for adverse weather conditions.'],
+          ['Thomas Weber', '<span style="color: #1D9BD1 !important; font-weight: 600;">@Juspay AI</span> what are the key safety metrics we should focus on?'],
+          ['Juspay AI', 'For Level 3 autonomous systems, critical safety metrics include: sensor fusion accuracy (target: >99.9%), decision-making latency (<100ms), and fail-safe activation time (<50ms). Current system performance shows 99.7% sensor fusion accuracy. Recommendation: enhance LiDAR redundancy for adverse weather conditions.'],
         ],
         'vehicle-connectivity': [
           ['Ananya Reddy', '5G connectivity integration complete. Testing in production vehicles.'],
@@ -1474,9 +1471,9 @@ Together, we're building not just great cars, but a sustainable future. Thank yo
           
           // Use realistic message generator for channels (except general which has special long-form messages)
           if (isChannel && chatId !== 'general') {
-            // Occasionally have Merc AI post proactively (15% chance)
+            // Occasionally have Juspay AI post proactively (15% chance)
             if (Math.random() < 0.15) {
-              const mercAIPosts: Record<string, string[]> = {
+              const juspayAIPosts: Record<string, string[]> = {
                 'mbux-development': [
                   'I\'ve completed an analysis of the MBUX performance metrics. Current system shows 98.5% uptime with voice recognition accuracy at 97.2%. Recommendation: optimize the rendering pipeline for 15% faster response times.',
                   'MBUX telemetry data indicates excellent stability. The neural network model is performing well. I suggest focusing on enhancing natural language understanding for better user experience.',
@@ -1516,52 +1513,52 @@ Together, we're building not just great cars, but a sustainable future. Thank yo
                 ],
               }
               
-              const mercAIMessages = mercAIPosts[chatId] || [
+              const juspayAIMessages = juspayAIPosts[chatId] || [
                 'I\'ve analyzed the data and can provide insights. Based on current metrics, the system is performing well.',
                 'Based on my analysis, I recommend focusing on these key areas for improvement.',
                 'I\'ve reviewed the latest data. Here are my findings and recommendations.',
               ]
               
-              who = 'Merc AI'
-              text = pick(mercAIMessages)
+              who = 'Juspay AI'
+              text = pick(juspayAIMessages)
             } else {
               const msg = generateRealisticMessage(chatId, chatName, isChannel, isGroupDM, pick)
               who = msg.who
               text = msg.text
             }
             
-            // Check if message contains @Merc AI mention and add response (for channels)
-            if (text.includes('@Merc AI') || text.includes('@merc-ai') || text.toLowerCase().includes('merc ai')) {
-              // Add Merc AI response after a short delay (simulated by adding it as next message)
-              const mercAIResponses: Record<string, string[]> = {
-                'mbux-development': [
-                  'Based on current telemetry data, I recommend optimizing the rendering pipeline. The MBUX interface can achieve 15% faster response times by implementing GPU-accelerated rendering.',
-                  'I\'ve analyzed the MBUX performance metrics. The bottleneck is in the voice recognition processing. Optimizing the neural network model can reduce latency by 20%.',
-                  'Current MBUX system shows excellent stability. Recommendation: focus on enhancing the natural language understanding for better user experience.',
+            // Check if message contains @Juspay AI mention and add response (for channels)
+            if (text.includes('@Juspay AI') || text.includes('@juspay-ai') || text.toLowerCase().includes('juspay ai')) {
+              // Add Juspay AI response after a short delay (simulated by adding it as next message)
+              const juspayAIResponses: Record<string, string[]> = {
+                'hyperswitch-core': [
+                  'Based on current transaction data, I recommend optimizing the payment processing pipeline. The gateway can achieve 15% faster response times by implementing connection pooling.',
+                  'I\'ve analyzed the payment gateway performance metrics. The bottleneck is in the payment method routing. Optimizing the routing algorithm can reduce latency by 20%.',
+                  'Current payment gateway shows excellent stability. Recommendation: focus on enhancing the fraud detection for better transaction security.',
                 ],
-                'autonomous-driving': [
-                  'For Level 3 autonomous systems, critical safety metrics include: sensor fusion accuracy (target: >99.9%), decision-making latency (<100ms), and fail-safe activation time (<50ms).',
-                  'Based on test data analysis, the autonomous driving system shows 99.7% sensor fusion accuracy. Recommendation: enhance LiDAR redundancy for adverse weather conditions.',
-                  'Safety validation metrics are exceeding targets. The system demonstrates excellent performance in edge cases and emergency scenarios.',
+                'hyperswitch-dashboard': [
+                  'For payment analytics dashboards, critical metrics include: transaction success rate (target: >99%), average processing time (<200ms), and fraud detection accuracy (>99%).',
+                  'Based on dashboard analytics, the payment system shows 99.99% uptime. Recommendation: enhance real-time monitoring for better visibility.',
+                  'Dashboard performance metrics are exceeding targets. The system demonstrates excellent reliability in high-traffic scenarios.',
                 ],
-                'battery-tech': [
-                  'Battery performance analysis shows optimal charging curves. Current implementation achieves 0-80% charge in 18 minutes with minimal degradation.',
-                  'Energy density improvements are on track. The new cell chemistry shows 30% improvement while maintaining safety standards.',
-                  'Battery recycling efficiency at 95% material recovery. Recommendation: expand recycling infrastructure to support increased production volume.',
+                'payment-security': [
+                  'Payment security analysis shows optimal encryption implementation. Current system achieves PCI-DSS compliance with zero security incidents.',
+                  'Fraud detection improvements are on track. The new ML model shows 99.2% accuracy while maintaining low false positive rates.',
+                  'Security audit efficiency at 100% compliance. Recommendation: expand security monitoring to support increased transaction volume.',
                 ],
-                'vehicle-connectivity': [
-                  '5G connectivity integration shows excellent performance. Latency reduced to <10ms for vehicle-to-infrastructure communication.',
-                  'Connected services uptime at 99.9% exceeds targets. System reliability metrics are optimal.',
-                  'Over-the-air update system ready for deployment. Testing shows successful updates to 10,000+ vehicles without issues.',
+                'ai-powered-dev': [
+                  'AI fraud detection integration shows excellent performance. Detection latency reduced to <50ms for real-time transaction analysis.',
+                  'Fraud detection system uptime at 99.9% exceeds targets. Model accuracy metrics are optimal.',
+                  'Machine learning model updates ready for deployment. Testing shows successful fraud detection on 1M+ transactions without issues.',
                 ],
-                'safety-systems': [
-                  'PRE-SAFE system activation time improved by 40%. Current performance exceeds industry standards.',
-                  'Crash test analysis shows 5-star Euro NCAP rating achieved. All safety systems performing optimally.',
-                  'Active brake assist accuracy at 99.8% in test scenarios. System ready for production deployment.',
+                'click2pay': [
+                  'Click2Pay checkout success rate improved by 5%. Current performance exceeds industry standards.',
+                  'Express checkout adoption increased by 40%. User experience metrics show significant improvement.',
+                  'Payment conversion rate at 95% in A/B tests. System ready for production deployment.',
                 ],
               }
               
-              const channelResponses = mercAIResponses[chatId] || [
+              const channelResponses = juspayAIResponses[chatId] || [
                 'I\'ve analyzed the data and can provide insights. Based on current metrics, the system is performing well.',
                 'Thank you for the mention. I can help optimize this further. Let me analyze the relevant data.',
                 'Based on my analysis, I recommend focusing on these key areas for improvement.',
@@ -1569,28 +1566,28 @@ Together, we're building not just great cars, but a sustainable future. Thank yo
               
               // Add Merc AI response message
               setTimeout(() => {
-                const mercAIMessage: SlackMsg = {
+                const juspayAIMessage: SlackMsg = {
                   id: `${chatId}-mercai-${Date.now()}`,
-                  who: 'Merc AI',
+                  who: 'Juspay AI',
                   text: pick(channelResponses),
                   when: new Date(msgTime.getTime() + 30000).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })
                 }
-                messages.push(mercAIMessage)
+                messages.push(juspayAIMessage)
               }, 100)
             }
           } else if (chatId === 'general') {
             // Keep existing long-form announcements for general channel
-            // Occasionally have Merc AI post proactively in general channel (10% chance)
+            // Occasionally have Juspay AI post proactively in general channel (10% chance)
             if (Math.random() < 0.10) {
-              const mercAIGeneralPosts = [
+              const juspayAIGeneralPosts = [
                 'I\'ve analyzed company-wide metrics and can provide insights. Overall performance is strong across all departments.',
                 'Based on my analysis of our systems and operations, I recommend focusing on these strategic areas.',
                 'I\'ve reviewed the latest company data. Here are some insights that might be helpful for our Q2 initiatives.',
                 'Company-wide analysis complete. Key metrics are trending positively. I can provide detailed breakdowns if needed.',
               ]
               
-              who = 'Merc AI'
-              text = pick(mercAIGeneralPosts)
+              who = 'Juspay AI'
+              text = pick(juspayAIGeneralPosts)
             } else {
               const template = templates[templateIndex % templates.length]
               templateIndex++
@@ -1598,8 +1595,8 @@ Together, we're building not just great cars, but a sustainable future. Thank yo
               text = template[1] as string
             }
             
-            // Check if message contains @Merc AI mention in general channel and add response
-            if (text.includes('@Merc AI') || text.includes('@merc-ai') || text.toLowerCase().includes('merc ai')) {
+            // Check if message contains @Juspay AI mention in general channel and add response
+            if (text.includes('@Juspay AI') || text.includes('@juspay-ai') || text.toLowerCase().includes('juspay ai')) {
               const generalChannelResponses = [
                 'I\'ve analyzed the company-wide data and can provide insights. Based on current metrics across all departments, here\'s what I recommend.',
                 'Thank you for mentioning me. I can help with strategic analysis and provide data-driven recommendations.',
@@ -1610,18 +1607,18 @@ Together, we're building not just great cars, but a sustainable future. Thank yo
               
               // Add Merc AI response message
               setTimeout(() => {
-                const mercAIMessage: SlackMsg = {
+                const juspayAIMessage: SlackMsg = {
                   id: `${chatId}-mercai-${Date.now()}`,
-                  who: 'Merc AI',
+                  who: 'Juspay AI',
                   text: pick(generalChannelResponses),
                   when: new Date(msgTime.getTime() + 30000).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })
                 }
-                messages.push(mercAIMessage)
+                messages.push(juspayAIMessage)
               }, 100)
             }
             
             // Handle actions if present (third element) - only for non-Merc AI messages
-            if (who !== 'Merc AI' && templates.length > 0) {
+            if (who !== 'Juspay AI' && templates.length > 0) {
               const template = templates[templateIndex % templates.length]
               templateIndex++
               if (template.length > 2 && template[2]) {
@@ -1668,7 +1665,7 @@ Together, we're building not just great cars, but a sustainable future. Thank yo
                 'I can provide some recommendations based on current performance metrics.',
               ]
               
-              who = 'Merc AI'
+              who = 'Juspay AI'
               text = pick(mercAIGroupDMPosts)
             } else {
               const template = templates[templateIndex % templates.length]
@@ -1677,8 +1674,8 @@ Together, we're building not just great cars, but a sustainable future. Thank yo
               text = template[1] as string
             }
             
-            // Check if message contains @Merc AI mention in group DMs and add response
-            if (isGroupDM && (text.includes('@Merc AI') || text.includes('@merc-ai') || text.toLowerCase().includes('merc ai'))) {
+            // Check if message contains @Juspay AI mention in group DMs and add response
+            if (isGroupDM && (text.includes('@Juspay AI') || text.includes('@juspay-ai') || text.toLowerCase().includes('juspay ai'))) {
               const groupDMResponses = [
                 'I\'ve analyzed the discussion and can provide insights. Based on the context, here\'s what I recommend.',
                 'Thank you for mentioning me. I can help with that. Let me provide some relevant information.',
@@ -1689,13 +1686,13 @@ Together, we're building not just great cars, but a sustainable future. Thank yo
               
               // Add Merc AI response message
               setTimeout(() => {
-                const mercAIMessage: SlackMsg = {
+                const juspayAIMessage: SlackMsg = {
                   id: `${chatId}-mercai-${Date.now()}`,
-                  who: 'Merc AI',
+                  who: 'Juspay AI',
                   text: pick(groupDMResponses),
                   when: new Date(msgTime.getTime() + 30000).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })
                 }
-                messages.push(mercAIMessage)
+                messages.push(juspayAIMessage)
               }, 100)
             }
           }
@@ -1961,13 +1958,13 @@ Together, we're building not just great cars, but a sustainable future. Thank yo
       const target = e.target as HTMLElement
       if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA') return
       
-      if (selectedChat === 'workday-bot') {
+      if (selectedChat === 'juspay-ai') {
         if (e.key === 'p' || e.key === 'P') {
           // Press 'P' to trigger leave approval request
           const leaveDates = `${new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - ${new Date(Date.now() + 10 * 24 * 60 * 60 * 1000).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`
-          const workdayBotMessage: SlackMsg = {
-            id: `workday-bot-leave-${Date.now()}`,
-            who: 'Workday Bot',
+          const juspayAiMessage: SlackMsg = {
+            id: `juspay-ai-leave-${Date.now()}`,
+            who: 'Juspay AI',
             text: `Hi! 👋<br><br>I have a leave request from <strong>Sophie</strong> that needs your approval.<br><br><strong>Leave Details:</strong><br>• Dates: ${leaveDates}<br>• Type: Vacation<br>• Duration: 4 days<br>• Reason: Personal time off<br><br>Please review and approve or reject this request.`,
             when: new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }),
             actions: [
@@ -1990,8 +1987,8 @@ Together, we're building not just great cars, but a sustainable future. Thank yo
           // Add message with a small delay for smooth appearance
           setTimeout(() => {
             setChatMessages(prev => {
-              const current = prev['workday-bot'] || []
-              return { ...prev, 'workday-bot': [...current, workdayBotMessage] }
+              const current = prev['juspay-ai'] || []
+              return { ...prev, 'juspay-ai': [...current, juspayAiMessage] }
             })
           }, 200)
         } else if (e.key === 'q' || e.key === 'Q') {
@@ -2004,9 +2001,9 @@ Together, we're building not just great cars, but a sustainable future. Thank yo
           const tool = tools[Math.floor(Math.random() * tools.length)]
           const reason = reasons[Math.floor(Math.random() * reasons.length)]
           
-          const workdayBotMessage: SlackMsg = {
-            id: `workday-bot-tool-${Date.now()}`,
-            who: 'Workday Bot',
+          const juspayAiMessage: SlackMsg = {
+            id: `juspay-ai-tool-${Date.now()}`,
+            who: 'Juspay AI',
             text: `Hi! 👋<br><br>I have a tool access request from <strong>${getFirstName(employee)}</strong> that needs your approval.<br><br><strong>Access Details:</strong><br>• Tool: ${tool}<br>• Reason: ${reason}<br>• Requested: ${new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}<br><br>Please review and approve or reject this request.`,
             when: new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }),
             actions: [
@@ -2029,8 +2026,8 @@ Together, we're building not just great cars, but a sustainable future. Thank yo
           // Add message with a small delay for smooth appearance
           setTimeout(() => {
             setChatMessages(prev => {
-              const current = prev['workday-bot'] || []
-              return { ...prev, 'workday-bot': [...current, workdayBotMessage] }
+              const current = prev['juspay-ai'] || []
+              return { ...prev, 'juspay-ai': [...current, juspayAiMessage] }
             })
           }, 200)
         }
@@ -2048,18 +2045,6 @@ Together, we're building not just great cars, but a sustainable future. Thank yo
     
     allChats.forEach(chat => {
       initialMessages[chat.id] = generateContextualMessages(chat.id, chat)
-      
-      // Mark historical actions as completed for workday-bot
-      if (chat.id === 'workday-bot') {
-        const workdayMessages = initialMessages[chat.id] || []
-        const completedActions: Record<string, string> = {}
-        workdayMessages.forEach(msg => {
-          if (msg.actions && msg.actions.length > 0 && msg.actions[0].id.includes('historical')) {
-            completedActions[msg.id] = msg.actions[0].id
-          }
-        })
-        setCompletedActions(prev => ({ ...prev, ...completedActions }))
-      }
     })
     
     setChatMessages(initialMessages)
@@ -2070,10 +2055,10 @@ Together, we're building not just great cars, but a sustainable future. Thank yo
     const pick = <T,>(arr: T[]): T => arr[Math.floor(Math.random() * arr.length)]
     
     // Get all chat IDs statically (don't depend on unreadCounts)
-    // Exclude workday-bot from periodic messages - it doesn't stream
+    // Exclude juspay-ai from periodic messages - it doesn't stream
     const allChatIds = [
       'alice', 'bob', 'carol', 'eve', 'james', 'priya', 'david', 'sarah', 'mike',
-      'group-1', 'group-2', 'group-3', 'group-4', 'group-5',
+      'group-1', 'group-2', 'group-3', 'group-5',
       'eqe-launch', 'sales-updates', 'service-network', 'general', 'eq-series', 'new-launches', 'mbux-development', 'autonomous-driving', 'vehicle-connectivity', 'battery-tech', 'engine-development', 'safety-systems',
       'sales-channels', 'service-centers', 'dealer-network', 'customer-support', 'warranty-services', 'parts-logistics', 'quality-assurance', 'testing-prototypes', 'design-studio', 'marketing-campaigns', 'product-planning', 'germany-team', 'france-team', 'italy-team'
     ]
@@ -2087,8 +2072,8 @@ Together, we're building not just great cars, but a sustainable future. Thank yo
       let p = pick(getOtherPeople)
       let text = ''
       
-      if (chatId === 'workday-bot') {
-        // Workday Bot does not stream random messages - skip it
+      if (chatId === 'juspay-ai') {
+        // Juspay AI does not stream random messages - skip it
         return null
       } else if (chatId === 'merc-ai') {
         // Merc AI does not stream random messages in its own DM - skip it
@@ -2098,7 +2083,7 @@ Together, we're building not just great cars, but a sustainable future. Thank yo
         // Use realistic message generator for channels
         // Occasionally have Merc AI post proactively (15% chance)
         if (Math.random() < 0.15) {
-          const mercAIPosts: Record<string, string[]> = {
+          const juspayAIPosts: Record<string, string[]> = {
             'mbux-development': [
               'I\'ve completed an analysis of the MBUX performance metrics. Current system shows 98.5% uptime with voice recognition accuracy at 97.2%.',
               'MBUX telemetry data indicates excellent stability. Recommendation: optimize the rendering pipeline for 15% faster response times.',
@@ -2126,14 +2111,14 @@ Together, we're building not just great cars, but a sustainable future. Thank yo
             ],
           }
           
-          const mercAIMessages = mercAIPosts[chatId] || [
+          const juspayAIMessages = juspayAIPosts[chatId] || [
             'I\'ve analyzed the data and can provide insights. Based on current metrics, the system is performing well.',
             'Based on my analysis, I recommend focusing on these key areas for improvement.',
             'I\'ve reviewed the latest data. Here are my findings and recommendations.',
           ]
           
           p = people.find(pp => pp.n === 'Merc AI') || p
-          text = pick(mercAIMessages)
+          text = pick(juspayAIMessages)
         } else {
           const msg = generateRealisticMessage(chatId, chatName, isChannel, isGroupDM, pick)
           // IMPORTANT: Ensure current user never sends messages automatically in channels
@@ -2158,8 +2143,8 @@ Together, we're building not just great cars, but a sustainable future. Thank yo
           }
         }
         
-        // Check if message contains @Merc AI mention in channels and add response
-        if (text.includes('@Merc AI') || text.includes('@merc-ai') || text.toLowerCase().includes('merc ai')) {
+        // Check if message contains @Juspay AI mention in channels and add response
+        if (text.includes('@Juspay AI') || text.includes('@juspay-ai') || text.toLowerCase().includes('juspay ai')) {
           const mercAIResponses: Record<string, string[]> = {
             'mbux-development': [
               'Based on current telemetry data, I recommend optimizing the rendering pipeline. The MBUX interface can achieve 15% faster response times by implementing GPU-accelerated rendering.',
@@ -2198,13 +2183,13 @@ Together, we're building not just great cars, but a sustainable future. Thank yo
           setTimeout(() => {
             setChatMessages(prev => {
               const current = prev[chatId] || []
-              const mercAIMessage: SlackMsg = {
+              const juspayAIMessage: SlackMsg = {
                 id: `${chatId}-mercai-${Date.now()}`,
-                who: 'Merc AI',
+                who: 'Juspay AI',
                 text: pick(channelResponses),
                 when: new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })
               }
-              return { ...prev, [chatId]: [...current, mercAIMessage] }
+              return { ...prev, [chatId]: [...current, juspayAIMessage] }
             })
           }, 2000) // 2 second delay for Merc AI response
         }
@@ -2244,9 +2229,8 @@ Together, we're building not just great cars, but a sustainable future. Thank yo
           const dmContexts: Record<string, string[]> = {
             'group-1': ['Hey team!', 'What do you think?', 'Sounds good to me.'],
             'group-2': ['Morning everyone!', 'Ready for the meeting?', 'Let\'s sync up.'],
-            'group-3': ['Update: Changes are ready', 'I\'ll review it', 'Thanks!'],
-            'group-4': ['Status update', 'Looking good', 'Keep me posted'],
-            'group-5': ['Hey!', 'How\'s it going?', 'All set here'],
+            'group-3': ['Arnab, Deepanshu, Harshita'],
+            'group-5': ['Spoorthi Ramesh, Abhijeet, Shruti Karmarkar'],
           }
           const contexts = dmContexts[chatId] || [
             `Hey! Just following up.`,
@@ -2256,8 +2240,8 @@ Together, we're building not just great cars, but a sustainable future. Thank yo
           text = pick(contexts)
         }
         
-        // Check if message contains @Merc AI mention in group DMs and add response
-        if (text.includes('@Merc AI') || text.includes('@merc-ai') || text.toLowerCase().includes('merc ai')) {
+        // Check if message contains @Juspay AI mention in group DMs and add response
+        if (text.includes('@Juspay AI') || text.includes('@juspay-ai') || text.toLowerCase().includes('juspay ai')) {
           const groupDMResponses = [
             'I\'ve analyzed the discussion and can provide insights. Based on the context, here\'s what I recommend.',
             'Thank you for mentioning me. I can help with that. Let me provide some relevant information.',
@@ -2270,13 +2254,13 @@ Together, we're building not just great cars, but a sustainable future. Thank yo
           setTimeout(() => {
             setChatMessages(prev => {
               const current = prev[chatId] || []
-              const mercAIMessage: SlackMsg = {
+              const juspayAIMessage: SlackMsg = {
                 id: `${chatId}-mercai-${Date.now()}`,
-                who: 'Merc AI',
+                who: 'Juspay AI',
                 text: pick(groupDMResponses),
                 when: new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })
               }
-              return { ...prev, [chatId]: [...current, mercAIMessage] }
+              return { ...prev, [chatId]: [...current, juspayAIMessage] }
             })
           }, 2000) // 2 second delay for Merc AI response
         }
@@ -2375,9 +2359,9 @@ Together, we're building not just great cars, but a sustainable future. Thank yo
       let p = pick(getOtherPeople)
       let text = ''
       
-      if (selectedChat === 'workday-bot') {
-        // Special handling for Workday Bot - HR-focused messages
-        p = people.find(pp => pp.n === 'Workday Bot') || p
+      if (selectedChat === 'juspay-ai') {
+        // Special handling for Juspay AI - HR-focused messages
+        p = people.find(pp => pp.n === 'Juspay AI') || p
         text = pick([
           `You have 2 pending leave requests that need your review.`,
           `Sophie's leave request is still pending approval.`,
@@ -2412,9 +2396,8 @@ Together, we're building not just great cars, but a sustainable future. Thank yo
         const dmContexts: Record<string, string[]> = {
           'group-1': ['Hey team!', 'What do you think?', 'Sounds good to me.'],
           'group-2': ['Morning everyone!', 'Ready for the meeting?', 'Let\'s sync up.'],
-          'group-3': ['Update: Changes are ready', 'I\'ll review it', 'Thanks!'],
-          'group-4': ['Status update', 'Looking good', 'Keep me posted'],
-          'group-5': ['Hey!', 'How\'s it going?', 'All set here'],
+          'group-3': ['Arnab, Deepanshu, Harshita'],
+          'group-5': ['Spoorthi Ramesh, Abhijeet, Shruti Karmarkar'],
         }
         const contexts = dmContexts[selectedChat] || [
           `Hey! Just following up.`,
@@ -2503,7 +2486,7 @@ Together, we're building not just great cars, but a sustainable future. Thank yo
 
   // Background process: Slowly toggle users between online/offline status
   useEffect(() => {
-    const userIds = ['workday-bot', 'alice', 'bob', 'carol', 'eve', 'james', 'priya', 'david', 'sarah', 'mike']
+    const userIds = ['juspay-ai', 'alice', 'bob', 'carol', 'eve', 'james', 'priya', 'david', 'sarah', 'mike']
     
     const toggleOnlineStatus = () => {
       // Randomly select 1-2 users to toggle (slow process)
@@ -2722,8 +2705,8 @@ Together, we're building not just great cars, but a sustainable future. Thank yo
       [messageId]: actionId
     }))
     
-    // If "Approve Leave" is clicked in workday-bot DM, add thank you message from employee
-    if (selectedChat === 'workday-bot' && actionId === 'approve-leave') {
+    // If "Approve Leave" is clicked in juspay-ai DM, add thank you message from employee
+    if (selectedChat === 'juspay-ai' && actionId === 'approve-leave') {
       // Find Sophie Dubois's chat ID (alice)
       const sophieChatId = 'alice'
       const thankYouMessage: SlackMsg = {
@@ -2747,7 +2730,7 @@ Together, we're building not just great cars, but a sustainable future. Thank yo
       }, 1500)
     }
     
-    // If "Approve Tool Access" is clicked in workday-bot DM, no thank you message (as requested)
+    // If "Approve Tool Access" is clicked in juspay-ai DM, no thank you message (as requested)
     // The action is just marked as completed above
   }
 
@@ -2864,7 +2847,6 @@ Together, we're building not just great cars, but a sustainable future. Thank yo
     counts['group-1'] = 3 // Sophie Dubois, Marco Rossi, Priya Patel
     counts['group-2'] = 3 // Emma Schmidt, Thomas Weber, Ananya Reddy
     counts['group-3'] = 3 // David Chen, Sarah Williams, Alessandro Bianchi
-    counts['group-4'] = 3 // Workday Bot, Sophie Dubois, Marco Rossi
     counts['group-5'] = 3 // Emma Wilson, Alex Thompson, Lisa Anderson
     
     return counts
@@ -3428,7 +3410,7 @@ Together, we're building not just great cars, but a sustainable future. Thank yo
                 const names = chat.name.split(', ').slice(0, 2)
                 return names.map(name => {
                   const person = people.find(p => p.n === name.trim())
-                  return person?.a || '/assets/avatar.png'
+                  return person?.a || '/assets/avatar.jpeg'
                 })
               }
               return (
@@ -3888,7 +3870,7 @@ Together, we're building not just great cars, but a sustainable future. Thank yo
                       const chatItem = dmChats.find(c => c.name === name.trim())
                       return { 
                         name, 
-                        avatar: person?.a || '/assets/avatar.png',
+                        avatar: person?.a || '/assets/avatar.jpeg',
                         isOnline: chatItem?.isOnline
                       }
                     })
@@ -4563,7 +4545,7 @@ Together, we're building not just great cars, but a sustainable future. Thank yo
                         style={{ cursor: 'pointer' }}
                         onClick={() => {}}
                       >
-                        <img src={p?.a || '/assets/avatar.png'} alt={m.who} width={38} height={38} style={{ borderRadius: 8, objectFit: 'cover', flexShrink: 0 }} />
+                        <img src={p?.a || '/assets/avatar.jpeg'} alt={m.who} width={38} height={38} style={{ borderRadius: 8, objectFit: 'cover', flexShrink: 0 }} />
                       </div>
                     ) : (
                       <div style={{ width: 38 }} />

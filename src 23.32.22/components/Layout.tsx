@@ -11,8 +11,8 @@ export default function Layout() {
   const path = location.pathname
   const hideNav = path === '/spaces/service'
 
-  type ChatMsg = { id?: string; role: 'user' | 'workday-bot'; text?: string; html?: string; kind?: 'text' | 'graph' | 'status' | 'rich' | 'steps'; steps?: Array<{ text: string; done: boolean }>; graph?: { title: string; provider: string; id: string; series?: Array<[number, number]> } }
-  const [workdayBotOpen, setWorkdayBotOpen] = useState(false)
+  type ChatMsg = { id?: string; role: 'user' | 'juspay-ai'; text?: string; html?: string; kind?: 'text' | 'graph' | 'status' | 'rich' | 'steps'; steps?: Array<{ text: string; done: boolean }>; graph?: { title: string; provider: string; id: string; series?: Array<[number, number]> } }
+  const [juspayAiOpen, setJuspayAiOpen] = useState(false)
   const [chatInput, setChatInput] = useState('')
   const [chat, setChat] = useState<ChatMsg[]>([])
   const [feedbackHover, setFeedbackHover] = useState(false)
@@ -69,14 +69,14 @@ export default function Layout() {
     return () => window.removeEventListener('start-investigation', onStart)
   }, [])
 
-  // Reset Workday Bot chat and welcome on Prevention Center entry
+  // Reset Juspay AI chat and welcome on Prevention Center entry
   useEffect(() => {
     const onPrev = () => {
       try {
         setChat([])
         hasWelcomedRef.current = true
         const welcomeId = `prev-${Date.now()}`
-        setChat((c) => [...c, { id: welcomeId, role: 'workday-bot', kind: 'rich', html: '' }])
+        setChat((c) => [...c, { id: welcomeId, role: 'juspay-ai', kind: 'rich', html: '' }])
         const segs = [
           { text: 'Hey James,', bold: false }, { br: true }, { br: true },
           { text: 'This ', bold: false }, { text: 'CHG-189', bold: true }, { text: ' needs a quick review from you. It\'s a risky DB index change near peak window, lock contention possible.', bold: false }, { br: true }, { br: true },
@@ -89,14 +89,14 @@ export default function Layout() {
     return () => window.removeEventListener('prevention-enter', onPrev)
   }, [])
 
-  // Reset Workday Bot chat and welcome on Command Center entry
+  // Reset Juspay AI chat and welcome on Command Center entry
   useEffect(() => {
     const onCmd = () => {
       try {
         setChat([])
         hasWelcomedRef.current = true
         const welcomeId = `cmd-${Date.now()}`
-        setChat((c) => [...c, { id: welcomeId, role: 'workday-bot', kind: 'rich', html: '' }])
+        setChat((c) => [...c, { id: welcomeId, role: 'juspay-ai', kind: 'rich', html: '' }])
         const segs = [
           { text: 'Welcome back to the ', bold: false },
           { text: 'Command Center', bold: true },
@@ -132,9 +132,9 @@ export default function Layout() {
       { text: 'Final checks and surfacing runbooks', done: false },
     ]
     // Notify any listeners (new, always-visible panel) about step sequence
-    try { window.dispatchEvent(new CustomEvent('workday-bot-steps-init', { detail: { steps: steps.map(s => s.text) } })) } catch {}
+    try { window.dispatchEvent(new CustomEvent('juspay-ai-steps-init', { detail: { steps: steps.map(s => s.text) } })) } catch {}
     // Still push to local chat state (harmless if panel not rendered)
-    setChat((c) => [...c, { id, role: 'workday-bot', kind: 'steps', steps }])
+    setChat((c) => [...c, { id, role: 'juspay-ai', kind: 'steps', steps }])
     // Simulate sequential completion over ~12–15 seconds total
     const rnd = (a: number, b: number) => Math.round(a + Math.random() * (b - a))
     // Durations tuned for ~12–15s total with 11 steps
@@ -165,20 +165,20 @@ export default function Layout() {
         try {
           const fire = (name: string, detail?: any) => window.dispatchEvent(new CustomEvent(name, { detail }))
           // Step done event for external panel
-          fire('workday-bot-step-done', { index: idx })
+          fire('juspay-ai-step-done', { index: idx })
           // Map step index to tab reveals and summary readiness
-          if (idx === 3) fire('workday-bot-summary-ready')
-          if (idx === 4) fire('workday-bot-reveal-tab', { id: 'investigation' })
-          if (idx === 5) fire('workday-bot-reveal-tab', { id: 'telemetry' })
-          if (idx === 7) fire('workday-bot-reveal-tab', { id: 'comms' })
-          if (idx === 8) fire('workday-bot-reveal-tab', { id: 'timeline' })
-          if (idx === 9) fire('workday-bot-reveal-tab', { id: 'pir' })
+          if (idx === 3) fire('juspay-ai-summary-ready')
+          if (idx === 4) fire('juspay-ai-reveal-tab', { id: 'investigation' })
+          if (idx === 5) fire('juspay-ai-reveal-tab', { id: 'telemetry' })
+          if (idx === 7) fire('juspay-ai-reveal-tab', { id: 'comms' })
+          if (idx === 8) fire('juspay-ai-reveal-tab', { id: 'timeline' })
+          if (idx === 9) fire('juspay-ai-reveal-tab', { id: 'pir' })
         } catch {}
         // After last step, emit rich summary
         if (idx === steps.length - 1) {
           setTimeout(() => {
             // Notify completion
-            try { window.dispatchEvent(new CustomEvent('workday-bot-steps-complete')) } catch {}
+            try { window.dispatchEvent(new CustomEvent('juspay-ai-steps-complete')) } catch {}
             // Remove steps block after a short pause
             setChat((c) => c.filter(m => m.id !== id))
             const apiKey = getOpenAIKey()
@@ -186,7 +186,7 @@ export default function Layout() {
               streamOpenAIReply('Provide an elaborate incident preparation summary for the investigation view just initialized. Include bold highlights and a bulleted list of what was prepared (alerts panel, telemetry charts, timeline). Avoid any undefined or placeholder tokens.', () => {})
             } else {
               const rid = `sum-${Date.now()}`
-              setChat((c) => [...c, { id: rid, role: 'workday-bot', kind: 'rich', html: '' }])
+              setChat((c) => [...c, { id: rid, role: 'juspay-ai', kind: 'rich', html: '' }])
               const segments = [
                 { text: 'Summary prepared for the investigation.', bold: true }, { br: true }, { br: true },
                 { text: 'What I readied:', bold: true }, { br: true },
@@ -223,10 +223,10 @@ export default function Layout() {
 
     // Insert a fresh rich message we will stream into
     const msgId = `ai-${Date.now()}`
-    setChat((c) => [...c, { id: msgId, role: 'workday-bot', kind: 'rich', html: '' }])
+    setChat((c) => [...c, { id: msgId, role: 'juspay-ai', kind: 'rich', html: '' }])
 
     const controller = new AbortController()
-    const sysPrompt = `You are Workday Bot, an incident investigation copilot. Keep replies elaborate and highly structured.
+    const sysPrompt = `You are Juspay AI, an incident investigation copilot. Keep replies elaborate and highly structured.
 Output STRICTLY valid HTML only (no markdown). Use:
 - <strong> for emphasis
 - <ul><li> for bullets
@@ -287,15 +287,15 @@ Avoid outer <html>/<body> tags.`
   }
 
   useEffect(() => {
-    if (workdayBotOpen && !hasWelcomedRef.current) {
+    if (juspayAiOpen && !hasWelcomedRef.current) {
       hasWelcomedRef.current = true
       const welcomeId = `welcome-${Date.now()}`
-      setChat((c) => [...c, { id: welcomeId, role: 'workday-bot', kind: 'rich', html: '' }])
+      setChat((c) => [...c, { id: welcomeId, role: 'juspay-ai', kind: 'rich', html: '' }])
       const onPrevention = path.startsWith('/prevention')
       const onAlerts = (path === '/' || path === '/alerts')
       const segments = onPrevention
         ? [
-            { text: 'Hey James, ', bold: false }, { text: 'Workday Bot here.', bold: true }, { br: true },
+            { text: 'Hey James, ', bold: false }, { text: 'Juspay AI here.', bold: true }, { br: true },
             { text: 'Welcome to the Prevention Center.', bold: false }, { br: true },
             { text: 'I’m reviewing change risk across services.', bold: false }, { br: true },
             { text: 'One change needs your attention: ', bold: false }, { text: 'PR‑1893 • payments‑api', bold: true }, { text: '.', bold: false }, { br: true },
@@ -308,13 +308,13 @@ Avoid outer <html>/<body> tags.`
             { text: 'If anything spikes, I’ll surface it here immediately.', bold: false },
           ]
         : [
-            { text: 'Hi, I\'m Workday Bot.', bold: false }, { br: true },
+            { text: 'Hi, I\'m Juspay AI.', bold: false }, { br: true },
             { text: 'I can help you with HR-related tasks like leave approvals, employee information, and more.', bold: false }, { br: true }, { br: true },
             { text: 'Try: ', bold: false }, { text: 'Check my leave balance', bold: true }, { text: ' or ', bold: false }, { text: 'Approve pending leave requests', bold: true }, { text: '.', bold: false },
           ]
       streamRichMessage(welcomeId, segments as any)
     }
-  }, [workdayBotOpen, path])
+  }, [juspayAiOpen, path])
 
   const sendChat = () => {
     const text = chatInput.trim()
@@ -349,7 +349,7 @@ Avoid outer <html>/<body> tags.`
     const apiKey = getOpenAIKey()
     if (apiKey) {
       // Show a transient thinking status
-      setChat((c) => [...c, { id: statusId, role: 'workday-bot', kind: 'status', text: 'Workday Bot is thinking…' }])
+      setChat((c) => [...c, { id: statusId, role: 'juspay-ai', kind: 'status', text: 'Juspay AI is thinking…' }])
       // Slight delay for natural feel, then replace with streamed rich HTML
       setTimeout(() => {
         // Remove status message before streaming
@@ -362,15 +362,15 @@ Avoid outer <html>/<body> tags.`
     // Fallback: local demo flow
     // 1) Thinking
     setTimeout(() => {
-      setChat((c) => [...c, { id: statusId, role: 'workday-bot', kind: 'status', text: 'Workday Bot is thinking…' }])
+      setChat((c) => [...c, { id: statusId, role: 'juspay-ai', kind: 'status', text: 'Juspay AI is thinking…' }])
     }, 600)
     // 2) Connecting
     setTimeout(() => {
-        setChat((c) => c.map(m => m.id === statusId ? { ...m, text: 'Workday Bot is connecting to Dynatrace…' } : m))
+        setChat((c) => c.map(m => m.id === statusId ? { ...m, text: 'Juspay AI is connecting to Dynatrace…' } : m))
     }, 600 + d1)
     // 3) Fetching
     setTimeout(() => {
-        setChat((c) => c.map(m => m.id === statusId ? { ...m, text: 'Workday Bot is fetching error logs…' } : m))
+        setChat((c) => c.map(m => m.id === statusId ? { ...m, text: 'Juspay AI is fetching error logs…' } : m))
     }, 600 + d1 + d2)
     // 4) Replace with streamed summary, then draw and show graph
     setTimeout(() => {
@@ -379,14 +379,14 @@ Avoid outer <html>/<body> tags.`
       const summary = summarizeSeries(series)
       const summaryId = `sum-${turn}`
       // Replace status with a fresh streamed summary
-        setChat((c) => c.filter(m => m.id !== statusId).concat({ id: summaryId, role: 'workday-bot', kind: 'text', text: '' }))
+        setChat((c) => c.filter(m => m.id !== statusId).concat({ id: summaryId, role: 'juspay-ai', kind: 'text', text: '' }))
       streamTextMessage(summaryId, summary, () => {
         const drawId = `draw-${turn}`
-        setChat((c) => [...c, { id: drawId, role: 'workday-bot', kind: 'status', text: 'Workday Bot is drawing the graph…' }])
+        setChat((c) => [...c, { id: drawId, role: 'juspay-ai', kind: 'status', text: 'Juspay AI is drawing the graph…' }])
         setTimeout(() => {
           if (graphInsertedForTurnRef.current[turn]) return
           graphInsertedForTurnRef.current[turn] = true
-          setChat((c) => c.filter(m => m.id !== drawId).concat({ role: 'workday-bot', kind: 'graph', graph: { title: 'Dynatrace: payments-api error logs (count)', provider: 'Dynatrace', id: graphId, series } }))
+          setChat((c) => c.filter(m => m.id !== drawId).concat({ role: 'juspay-ai', kind: 'graph', graph: { title: 'Dynatrace: payments-api error logs (count)', provider: 'Dynatrace', id: graphId, series } }))
           sendingRef.current = false
         }, d4)
       })
@@ -877,7 +877,7 @@ Avoid outer <html>/<body> tags.`
             </div>
 
             <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-              {/* Ask Workday Bot button hidden while chat is always visible in Arc side panel */}
+              {/* Ask Juspay AI button hidden while chat is always visible in Arc side panel */}
 
               <button 
                 style={{ 
@@ -888,7 +888,7 @@ Avoid outer <html>/<body> tags.`
                 onMouseEnter={() => setUserHovered(true)}
                 onMouseLeave={() => setUserHovered(false)}
               >
-                <img src="/assets/faces/face-6.jpg" alt="James McGill" width={32} height={32} style={{ display: 'block', minWidth: 32, minHeight: 32, borderRadius: '50%', objectFit: 'cover' }} />
+                <img src="/assets/avatar.jpeg" alt="Sangeeth Kumar" width={32} height={32} style={{ display: 'block', minWidth: 32, minHeight: 32, borderRadius: '50%', objectFit: 'cover' }} />
               </button>
             </div>
           </div>

@@ -278,26 +278,12 @@ function generateCompanyJson(setupData: SetupData) {
 function generatePeopleJson(setupData: SetupData) {
   const people = []
   
-  // For Mercedes default setup, add both Workday Bot and Merc AI
-  if (setupData.companyName === 'Mercedes-Benz') {
-    people.push({
-      name: 'Workday Bot',
-      avatar: '/assets/workday.png',
-      gender: 'neutral'
-    })
-    people.push({
-      name: 'Merc AI',
-      avatar: '/assets/merc-ai.png',
-      gender: 'neutral'
-    })
-  } else {
-    // Add bot with generated avatar (initials in square or custom avatar)
-    people.push({
-      name: setupData.botName,
-      avatar: setupData.botAvatar, // SVG data URI with initials or custom path
-      gender: 'neutral'
-    })
-  }
+  // Add bot with generated avatar (initials in square or custom avatar)
+  people.push({
+    name: setupData.botName,
+    avatar: setupData.botAvatar, // SVG data URI with initials or custom path
+    gender: 'neutral'
+  })
   
   // Add current user with internet photo
   people.push({
@@ -337,15 +323,15 @@ function getDefaultMercedesSetup(): SetupData {
   // Default Mercedes-Benz setup
   return {
     companyName: 'Mercedes-Benz',
-    companyLogo: '/assets/mercedes.png',
+    companyLogo: '/assets/juspay-logo.svg',
     companyDescription: 'Mercedes-Benz Technology & Digital is the technology and digital arm of Mercedes-Benz, driving innovation in automotive technology, connected vehicles, and digital services. With multinational offices across Europe, North America, and Asia, we develop cutting-edge solutions for autonomous driving, electric vehicles, MBUX infotainment systems, and cloud-based services that power the future of mobility.',
     industry: 'Automotive Technology & Digital Services',
     companySize: 'Large Enterprise',
     headquarters: 'Europe',
     countries: ['German', 'French', 'Italian', 'Indian', 'American'],
     currentUserName: 'Klaus Müller',
-    currentUserAvatar: 'https://randomuser.me/api/portraits/male/32.jpg',
-    botName: 'Merc AI',
+    currentUserAvatar: '/assets/avatar.jpeg',
+    botName: 'Juspay AI',
     botAvatar: '/assets/merc-ai.png',
     botType: 'ai',
     defaultTheme: 'dark',

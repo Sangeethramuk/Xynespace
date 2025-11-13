@@ -19,7 +19,7 @@ function generateBotName(companyName: string, botType: string): string {
   const companyInitials = companyName.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2)
   
   if (botType === 'hr') {
-    return 'Workday Bot'
+    return 'Juspay AI'
   } else if (botType === 'ai') {
     return `${companyInitials} AI` || 'AI Assistant'
   } else if (botType === 'ops') {

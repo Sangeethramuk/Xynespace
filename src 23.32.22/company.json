@@ -1,105 +1,162 @@
 {
-  "name": "Mercedes-Benz",
-  "logo": "/assets/mercedes.png",
-  "description": "Mercedes-Benz Technology & Digital is the technology and digital arm of Mercedes-Benz, driving innovation in automotive technology, connected vehicles, and digital services. With multinational offices across Europe, North America, and Asia, we develop cutting-edge solutions for autonomous driving, electric vehicles, MBUX infotainment systems, and cloud-based services that power the future of mobility.",
-  "industry": "Automotive Technology & Digital Services",
-  "companySize": "Large Enterprise",
-  "headquarters": "Europe",
+  "name": "Juspay",
+  "logo": "/assets/juspay-logo.svg",
+  "description": "Juspay is a leading payment technology company in India, providing payment infrastructure and solutions for businesses. We build cutting-edge payment gateways, fraud prevention systems, and payment optimization solutions that power seamless transactions for millions of users across e-commerce, fintech, and mobile applications.",
+  "industry": "Financial Technology & Payment Services",
+  "companySize": "Medium to Large Enterprise",
+  "headquarters": "Bangalore, India",
   "channels": {
     "types": [
       {
+        "type": "cross-functional",
+        "description": "Company-wide announcements and cross-team collaboration",
+        "examples": [
+          "#general",
+          "#announcements",
+          "#all-hands",
+          "#random"
+        ]
+      },
+      {
         "type": "engineering",
-        "description": "Technical discussions, code reviews, architecture decisions, and engineering best practices for automotive software and digital services",
-        "examples": ["#mbux-development", "#backend-services", "#vehicle-connectivity", "#cloud-platform", "#security", "#code-review"]
+        "description": "Technical discussions, code reviews, and engineering best practices",
+        "examples": [
+          "#engineering",
+          "#backend",
+          "#frontend",
+          "#api",
+          "#mobile",
+          "#devops",
+          "engine-development"
+        ]
       },
       {
         "type": "product",
-        "description": "Product planning, feature discussions, user feedback, and roadmap updates for digital products and services",
-        "examples": ["#product", "#mbux-design", "#ux-research", "#roadmap", "#feature-requests", "#eq-series"]
+        "description": "Product planning, feature discussions, and roadmap updates",
+        "examples": [
+          "#product",
+          "#design",
+          "#ux-research",
+          "#roadmap",
+          "#features"
+        ]
       },
       {
         "type": "operations",
-        "description": "Incident management, on-call rotations, infrastructure updates, and operational excellence for vehicle services and cloud infrastructure",
-        "examples": ["#incidents", "#on-call", "#infrastructure", "#monitoring", "#alerts", "#telematics"]
+        "description": "Incident management, infrastructure updates, and operational excellence",
+        "examples": [
+          "#incidents",
+          "#on-call",
+          "#infrastructure",
+          "#monitoring",
+          "#alerts"
+        ]
       },
       {
-        "type": "cross-functional",
-        "description": "Company-wide announcements, team updates, and cross-team collaboration across global offices",
-        "examples": ["#announcements", "#company-updates", "#team-standup", "#all-hands", "#germany-team", "#france-team"]
+        "type": "industry-specific",
+        "description": "Financial Technology & Payment Services specific discussions",
+        "examples": [
+          "hyperswitch-core"
+        ]
       },
       {
-        "type": "automotive",
-        "description": "Vehicle technology, autonomous driving, electric vehicles, and automotive systems",
-        "examples": ["#autonomous-driving", "#electric-vehicles", "#safety-systems", "#vehicle-testing", "#battery-tech"]
+        "type": "industry-specific",
+        "description": "Financial Technology & Payment Services specific discussions",
+        "examples": [
+          "hyperswitch-dashboard"
+        ]
+      },
+      {
+        "type": "industry-specific",
+        "description": "Financial Technology & Payment Services specific discussions",
+        "examples": [
+          "hyperswitch-sdk"
+        ]
+      },
+      {
+        "type": "industry-specific",
+        "description": "Financial Technology & Payment Services specific discussions",
+        "examples": [
+          "click2pay"
+        ]
+      },
+      {
+        "type": "industry-specific",
+        "description": "Financial Technology & Payment Services specific discussions",
+        "examples": [
+          "ai-powered-dev"
+        ]
       }
     ],
     "namingConventions": {
-      "engineering": "Lowercase with hyphens (e.g., #mbux-backend, #vehicle-api)",
-      "product": "Lowercase with hyphens (e.g., #mbux-features, #user-experience)",
+      "engineering": "Lowercase with hyphens (e.g., #backend-api, #frontend-ui)",
+      "product": "Lowercase with hyphens (e.g., #product-features, #user-experience)",
       "operations": "Lowercase with hyphens (e.g., #incidents, #on-call-rotation)",
-      "automotive": "Lowercase with hyphens (e.g., #eq-series, #autonomous-driving)",
-      "general": "Lowercase with hyphens or numbers (e.g., #incident-4412, #project-mbux)"
+      "general": "Lowercase with hyphens (e.g., #general, #announcements)"
     }
   },
   "roles": [
     {
+      "title": "Payment Engineer",
+      "responsibilities": [
+        "Develop payment gateway systems",
+        "Work on payment processing infrastructure",
+        "Integrate payment methods"
+      ],
+      "commonChannels": [
+        "hyperswitch-core",
+        "click2pay",
+        "hyperswitch-sdk"
+      ]
+    },
+    {
+      "title": "Fraud Prevention Engineer",
+      "responsibilities": [
+        "Design fraud detection systems",
+        "Test security protocols",
+        "Optimize payment security"
+      ],
+      "commonChannels": [
+        "hyperswitch-core",
+        "ai-powered-dev"
+      ]
+    },
+    {
       "title": "Software Engineer",
-      "responsibilities": ["Write and review code", "Design system architecture", "Participate in technical discussions", "Deploy and maintain services"],
-      "commonChannels": ["#mbux-development", "#backend-services", "#code-review"]
-    },
-    {
-      "title": "Product Manager",
-      "responsibilities": ["Define product roadmap", "Gather user requirements", "Coordinate cross-functional teams", "Track feature delivery"],
-      "commonChannels": ["#product", "#roadmap", "#feature-requests"]
-    },
-    {
-      "title": "Site Reliability Engineer (SRE)",
-      "responsibilities": ["Monitor system health", "Respond to incidents", "Improve system reliability", "Manage on-call rotations"],
-      "commonChannels": ["#incidents", "#on-call", "#monitoring", "#infrastructure"]
-    },
-    {
-      "title": "Engineering Manager",
-      "responsibilities": ["Lead engineering teams", "Drive technical strategy", "Facilitate team growth", "Coordinate with stakeholders"],
-      "commonChannels": ["#mbux-development", "#team-leads", "#all-hands"]
-    },
-    {
-      "title": "DevOps Engineer",
-      "responsibilities": ["Manage CI/CD pipelines", "Automate deployments", "Maintain infrastructure", "Optimize system performance"],
-      "commonChannels": ["#devops", "#infrastructure", "#deployments"]
-    },
-    {
-      "title": "Automotive Software Engineer",
-      "responsibilities": ["Develop vehicle software", "Work on MBUX systems", "Implement autonomous driving features", "Integrate vehicle connectivity"],
-      "commonChannels": ["#mbux-development", "#autonomous-driving", "#vehicle-connectivity"]
+      "responsibilities": [
+        "Write and review code",
+        "Design system architecture",
+        "Participate in technical discussions"
+      ],
+      "commonChannels": [
+        "hyperswitch-core",
+        "hyperswitch-dashboard"
+      ]
     }
   ],
   "topics": [
-    "MBUX infotainment system development",
-    "Autonomous driving technology",
-    "Electric vehicle software and battery management",
-    "Vehicle connectivity and telematics",
-    "Cloud platform services for vehicles",
-    "Incident response and post-mortems",
-    "System architecture and design decisions",
-    "Product feature planning and roadmaps",
-    "Infrastructure and deployment updates",
-    "Team collaboration across global offices",
-    "Technical documentation and knowledge sharing",
-    "Performance optimization and monitoring",
-    "Security updates and best practices",
-    "Cross-functional project coordination"
+    "Payment gateway development",
+    "Payment processing optimization",
+    "Fraud detection and prevention",
+    "Payment security",
+    "Transaction monitoring",
+    "Payment method integrations",
+    "API development",
+    "Software development and engineering",
+    "System architecture",
+    "Code quality"
   ],
   "communicationStyle": {
     "tone": "Professional yet collaborative",
     "formality": "Casual to semi-formal depending on context",
     "commonPatterns": [
-      "Quick status updates and check-ins",
-      "Technical deep-dives and architecture discussions",
-      "Incident coordination and resolution",
-      "Feature announcements and product updates",
-      "Team celebrations and recognition",
-      "Cross-timezone collaboration"
+      "Quick status updates",
+      "Technical discussions",
+      "Feature announcements",
+      "Team celebrations"
     ]
   },
-  "nationalities": ["German", "French", "Italian", "Indian", "American"]
+  "nationalities": [
+    "Indian"
+  ]
 }

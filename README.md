@@ -157,7 +157,7 @@ After generation, you can customize:
 - **@mentions**: Mention `@Merc AI` in any channel or group DM for contextual responses
 - **Group DMs**: Merc AI participates in group conversations with relevant insights
 
-### Keyboard Shortcuts (Workday Bot DM)
+### Keyboard Shortcuts (Juspay AI DM)
 - Press **`P`** - Trigger a leave approval request
 - Press **`Q`** - Trigger a tool access approval request
 
@@ -213,7 +213,7 @@ slack-kit/
 - Topics: Electric vehicle development, autonomous driving, vehicle connectivity, MBUX systems
 - Bots: 
   - **Merc AI** - AI Assistant for technical queries, data analysis, and insights
-  - **Workday Bot** - HR bot for leave approvals and tool access requests
+  - **Juspay AI** - HR bot for leave approvals and tool access requests
 - Merc AI posts proactively with MBUX performance metrics, autonomous driving analysis, battery tech insights
 
 ### Finance
