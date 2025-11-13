@@ -71,7 +71,7 @@ export default function SlackPage() {
   const [messageInput, setMessageInput] = useState('')
   const [isComposeFocused, setIsComposeFocused] = useState(false)
   const [activeTab, setActiveTab] = useState<'messages' | 'add-canvas' | 'files'>('messages')
-  const [selectedLeftIcon, setSelectedLeftIcon] = useState<string>('home')
+  const [selectedLeftIcon, setSelectedLeftIcon] = useState<string>('chat')
   const [hoveredMessageId, setHoveredMessageId] = useState<string | null>(null)
   const [showReactionPicker, setShowReactionPicker] = useState<string | null>(null)
   const [userReactions, setUserReactions] = useState<Record<string, Set<string>>>({}) // messageId -> Set of emojis user has reacted with
@@ -85,8 +85,100 @@ export default function SlackPage() {
   const [isResizing, setIsResizing] = useState<boolean>(false)
   const resizeRef = useRef<HTMLDivElement | null>(null)
   
+  // State for browser panel width and resizing
+  const [browserWidth, setBrowserWidth] = useState<number>(() => {
+    // Initialize to 35% of screen width, but ensure it's within reasonable bounds
+    const initialWidth = window.innerWidth * 0.35
+    return Math.max(300, Math.min(initialWidth, 800))
+  })
+  const [isResizingBrowser, setIsResizingBrowser] = useState<boolean>(false)
+  const browserResizeRef = useRef<HTMLDivElement | null>(null)
+  const resizeStartX = useRef<number>(0)
+  const resizeStartWidth = useRef<number>(0)
+  
   // State for unread counts - will be initialized from static arrays
   const [unreadCounts, setUnreadCounts] = useState<Record<string, number>>({})
+  
+  // State for collaborative browser session
+  const [isSessionActive, setIsSessionActive] = useState<boolean>(false)
+  const [browserUrl, setBrowserUrl] = useState<string>('https://en.wikipedia.org')
+  const [showSessionBanner, setShowSessionBanner] = useState<boolean>(false)
+  const [useProxy, setUseProxy] = useState<boolean>(false)
+  const loadTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+  
+  // Load URL with proxy fallback
+  const loadUrlWithProxy = (url: string, tabId: string) => {
+    const iframe = document.getElementById(`collab-browser-iframe-${tabId}`) as HTMLIFrameElement
+    if (!iframe) return
+    
+    // First, try direct load
+    iframe.src = url
+    setUseProxy(false)
+    
+    // Store the original URL for "open in new window" fallback
+    setBrowserTabs(tabs => tabs.map(tab => 
+      tab.id === tabId 
+        ? { ...tab, url, isLoading: true, error: null }
+        : tab
+    ))
+    
+    // Set timeout to try proxy if direct load fails
+    const timeoutId = setTimeout(() => {
+      // Try proxy service that works with iframes
+      const proxyUrl = `https://corsproxy.io/?${encodeURIComponent(url)}`
+      iframe.src = proxyUrl
+      setUseProxy(true)
+      
+      // Set another timeout for proxy failure
+      const proxyTimeout = setTimeout(() => {
+        // If proxy also fails, show error with option to open in new window
+        setBrowserTabs(tabs => tabs.map(tab => 
+          tab.id === tabId 
+            ? { ...tab, isLoading: false, error: `Unable to load ${url}. The site may block embedding.` }
+            : tab
+        ))
+      }, 5000)
+      
+      // Clear proxy timeout if iframe loads
+      const checkProxyLoad = setInterval(() => {
+        try {
+          if (iframe.contentWindow?.location.href) {
+            clearTimeout(proxyTimeout)
+            clearInterval(checkProxyLoad)
+          }
+        } catch (e) {
+          // Cross-origin, which is normal
+        }
+      }, 500)
+      
+      setTimeout(() => clearInterval(checkProxyLoad), 6000)
+    }, 3000)
+    
+    // Store timeout ref for cleanup
+    loadTimeoutRef.current = timeoutId as any
+  }
+  
+  // Tab management
+  type BrowserTab = {
+    id: string
+    url: string
+    title: string
+    isLoading: boolean
+    error: string | null
+  }
+  const [browserTabs, setBrowserTabs] = useState<BrowserTab[]>([
+    { id: '1', url: 'https://en.wikipedia.org', title: 'Wikipedia', isLoading: false, error: null }
+  ])
+  const [activeTabId, setActiveTabId] = useState<string>('1')
+  
+  // Cursor positions for collaborative users
+  const [cursorPositions, setCursorPositions] = useState<{
+    ankur: { x: number; y: number }
+    sakshi: { x: number; y: number }
+  }>({
+    ankur: { x: 40, y: 30 },
+    sakshi: { x: 60, y: 50 }
+  })
   
   // State for online status - tracks which users are online/offline
   const [onlineStatus, setOnlineStatus] = useState<Record<string, boolean>>({
@@ -238,6 +330,50 @@ export default function SlackPage() {
       document.body.style.userSelect = ''
     }
   }, [isResizing])
+
+  // Handle browser panel resize
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!isResizingBrowser) return
+      
+      // Calculate the change in mouse position (delta)
+      // Since browser is on the right, dragging left (negative delta) increases width
+      // Dragging right (positive delta) decreases width
+      const deltaX = resizeStartX.current - e.clientX
+      const totalWidth = window.innerWidth
+      
+      // Calculate new width based on initial width and delta
+      const newBrowserWidth = resizeStartWidth.current + deltaX
+      
+      // Constrain between 200px (min) and 70% of screen width (max)
+      const minWidth = 200
+      const maxWidth = totalWidth * 0.7
+      
+      // Clamp the width to min/max bounds
+      const clampedWidth = Math.max(minWidth, Math.min(newBrowserWidth, maxWidth))
+      setBrowserWidth(clampedWidth)
+    }
+
+    const handleMouseUp = () => {
+      setIsResizingBrowser(false)
+      resizeStartX.current = 0
+      resizeStartWidth.current = 0
+    }
+
+    if (isResizingBrowser) {
+      document.addEventListener('mousemove', handleMouseMove)
+      document.addEventListener('mouseup', handleMouseUp)
+      document.body.style.cursor = 'col-resize'
+      document.body.style.userSelect = 'none'
+    }
+
+    return () => {
+      document.removeEventListener('mousemove', handleMouseMove)
+      document.removeEventListener('mouseup', handleMouseUp)
+      document.body.style.cursor = ''
+      document.body.style.userSelect = ''
+    }
+  }, [isResizingBrowser])
 
   // Helper to add emojis to a message
   const addEmojis = (text: string, pickFn: <T,>(arr: T[]) => T): string => {
@@ -2484,6 +2620,105 @@ Together, we're building not just great cars, but a sustainable future. Thank yo
     }
   }, [chatMessages[selectedChat]?.length, selectedChat])
 
+  // Show session banner when there are messages and no active session
+  useEffect(() => {
+    const hasMessages = chatMessages[selectedChat] && chatMessages[selectedChat].length > 0
+    setShowSessionBanner(hasMessages && !isSessionActive)
+  }, [chatMessages[selectedChat]?.length, selectedChat, isSessionActive])
+
+  // Handlers for session management
+  const handleStartSession = () => {
+    setIsSessionActive(true)
+    setShowSessionBanner(false)
+  }
+
+  const handleEndSession = () => {
+    setIsSessionActive(false)
+    if (loadTimeoutRef.current) {
+      clearTimeout(loadTimeoutRef.current)
+      loadTimeoutRef.current = null
+    }
+  }
+
+  // Tab management handlers
+  const handleNewTab = () => {
+    const newTabId = Date.now().toString()
+    const newTab: BrowserTab = {
+      id: newTabId,
+      url: 'https://en.wikipedia.org',
+      title: 'New Tab',
+      isLoading: false,
+      error: null
+    }
+    setBrowserTabs([...browserTabs, newTab])
+    setActiveTabId(newTabId)
+  }
+
+  const handleCloseTab = (tabId: string) => {
+    if (browserTabs.length === 1) {
+      // Don't close the last tab, just end session
+      handleEndSession()
+      return
+    }
+    const newTabs = browserTabs.filter(tab => tab.id !== tabId)
+    setBrowserTabs(newTabs)
+    if (activeTabId === tabId) {
+      // Switch to the previous tab or first tab
+      const closedIndex = browserTabs.findIndex(t => t.id === tabId)
+      const newActiveIndex = closedIndex > 0 ? closedIndex - 1 : 0
+      setActiveTabId(newTabs[newActiveIndex].id)
+    }
+  }
+
+  const getActiveTab = () => browserTabs.find(tab => tab.id === activeTabId) || browserTabs[0]
+
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (loadTimeoutRef.current) {
+        clearTimeout(loadTimeoutRef.current)
+      }
+    }
+  }, [])
+
+  // Animate random cursor movements for collaborative users
+  useEffect(() => {
+    if (!isSessionActive) return
+
+    const browserContainer = document.getElementById('collab-browser-content')
+    if (!browserContainer) return
+
+    const animateCursor = (user: 'ankur' | 'sakshi', color: string) => {
+      const updatePosition = () => {
+        setCursorPositions(prev => ({
+          ...prev,
+          [user]: {
+            x: Math.random() * 100, // 0-100% of container width
+            y: Math.random() * 100  // 0-100% of container height
+          }
+        }))
+      }
+
+      // Initial random position
+      updatePosition()
+
+      // Update position every 2-5 seconds randomly
+      const interval = setInterval(() => {
+        updatePosition()
+      }, 2000 + Math.random() * 3000)
+
+      return interval
+    }
+
+    const ankurInterval = animateCursor('ankur', '#3b82f6')
+    const sakshiInterval = animateCursor('sakshi', '#10b981')
+
+    return () => {
+      clearInterval(ankurInterval)
+      clearInterval(sakshiInterval)
+    }
+  }, [isSessionActive])
+
   // Background process: Slowly toggle users between online/offline status
   useEffect(() => {
     const userIds = ['juspay-ai', 'alice', 'bob', 'carol', 'eve', 'james', 'priya', 'david', 'sarah', 'mike']
@@ -2895,120 +3130,228 @@ Together, we're building not just great cars, but a sustainable future. Thank yo
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12, width: '100%', alignItems: 'center', flex: 1 }}>
           {/* Home */}
           <div 
-            style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 0 }}
+            onClick={() => setSelectedLeftIcon('home')}
+            style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 0, cursor: 'pointer' }}
           >
             <div style={{ 
               width: 40, 
               height: 40, 
-              background: 'rgba(255, 255, 255, 0.18)', 
+              background: selectedLeftIcon === 'home' ? 'rgba(255, 255, 255, 0.18)' : 'transparent', 
               borderRadius: 8, 
               display: 'flex', 
               alignItems: 'center', 
               justifyContent: 'center' 
             }}>
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: '#ffffff' }}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: selectedLeftIcon === 'home' ? '#ffffff' : '#9ca3af' }}>
                 <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
                 <polyline points="9 22 9 12 15 12 15 22"></polyline>
               </svg>
             </div>
-            <span style={{ fontSize: 11, color: '#ffffff', fontFamily: 'Lato, sans-serif', fontWeight: 400 }}>Home</span>
+            <span style={{ fontSize: 11, color: selectedLeftIcon === 'home' ? '#ffffff' : '#9ca3af', fontFamily: 'Lato, sans-serif', fontWeight: 400 }}>Home</span>
           </div>
           
-          {/* DMs */}
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 0 }}>
+          {/* Board */}
+          <div 
+            onClick={() => setSelectedLeftIcon('board')}
+            style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 0, cursor: 'pointer' }}
+          >
             <div style={{ 
               width: 40, 
               height: 40, 
-              background: 'transparent', 
-              borderRadius: 4, 
+              background: selectedLeftIcon === 'board' ? 'rgba(255, 255, 255, 0.18)' : 'transparent', 
+              borderRadius: 8, 
               display: 'flex', 
               alignItems: 'center', 
               justifyContent: 'center' 
             }}>
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: '#9ca3af' }}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: selectedLeftIcon === 'board' ? '#ffffff' : '#9ca3af' }}>
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                <line x1="9" y1="3" x2="9" y2="21"></line>
+                <line x1="15" y1="3" x2="15" y2="21"></line>
+                <line x1="3" y1="9" x2="21" y2="9"></line>
+                <line x1="3" y1="15" x2="21" y2="15"></line>
+              </svg>
+            </div>
+            <span style={{ fontSize: 11, color: selectedLeftIcon === 'board' ? '#ffffff' : '#9ca3af', fontFamily: 'Lato, sans-serif', fontWeight: 400 }}>Board</span>
+          </div>
+          
+          {/* Base */}
+          <div 
+            onClick={() => setSelectedLeftIcon('base')}
+            style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 0, cursor: 'pointer' }}
+          >
+            <div style={{ 
+              width: 40, 
+              height: 40, 
+              background: selectedLeftIcon === 'base' ? 'rgba(255, 255, 255, 0.18)' : 'transparent', 
+              borderRadius: 8, 
+              display: 'flex', 
+              alignItems: 'center', 
+              justifyContent: 'center' 
+            }}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: selectedLeftIcon === 'base' ? '#ffffff' : '#9ca3af' }}>
+                <ellipse cx="12" cy="5" rx="9" ry="3"></ellipse>
+                <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path>
+                <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path>
+              </svg>
+            </div>
+            <span style={{ fontSize: 11, color: selectedLeftIcon === 'base' ? '#ffffff' : '#9ca3af', fontFamily: 'Lato, sans-serif', fontWeight: 400 }}>Base</span>
+          </div>
+          
+          {/* Chat */}
+          <div 
+            onClick={() => setSelectedLeftIcon('chat')}
+            style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 0, cursor: 'pointer' }}
+          >
+            <div style={{ 
+              width: 40, 
+              height: 40, 
+              background: selectedLeftIcon === 'chat' ? 'rgba(255, 255, 255, 0.18)' : 'transparent', 
+              borderRadius: 8, 
+              display: 'flex', 
+              alignItems: 'center', 
+              justifyContent: 'center' 
+            }}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: selectedLeftIcon === 'chat' ? '#ffffff' : '#9ca3af' }}>
                 <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
               </svg>
             </div>
-            <span style={{ fontSize: 11, color: '#9ca3af', fontFamily: 'Lato, sans-serif', fontWeight: 400 }}>DMs</span>
+            <span style={{ fontSize: 11, color: selectedLeftIcon === 'chat' ? '#ffffff' : '#9ca3af', fontFamily: 'Lato, sans-serif', fontWeight: 400 }}>Chat</span>
           </div>
           
-          {/* Activity */}
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 0 }}>
+          {/* Apps */}
+          <div 
+            onClick={() => setSelectedLeftIcon('apps')}
+            style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 0, cursor: 'pointer' }}
+          >
             <div style={{ 
               width: 40, 
               height: 40, 
-              background: 'transparent', 
-              borderRadius: 4, 
+              background: selectedLeftIcon === 'apps' ? 'rgba(255, 255, 255, 0.18)' : 'transparent', 
+              borderRadius: 8, 
               display: 'flex', 
               alignItems: 'center', 
               justifyContent: 'center' 
             }}>
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: '#9ca3af' }}>
-                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
-                <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: selectedLeftIcon === 'apps' ? '#ffffff' : '#9ca3af' }}>
+                <rect x="3" y="3" width="7" height="7"></rect>
+                <rect x="14" y="3" width="7" height="7"></rect>
+                <rect x="14" y="14" width="7" height="7"></rect>
+                <rect x="3" y="14" width="7" height="7"></rect>
               </svg>
             </div>
-            <span style={{ fontSize: 11, color: '#9ca3af', fontFamily: 'Lato, sans-serif', fontWeight: 400 }}>Activity</span>
+            <span style={{ fontSize: 11, color: selectedLeftIcon === 'apps' ? '#ffffff' : '#9ca3af', fontFamily: 'Lato, sans-serif', fontWeight: 400 }}>Apps</span>
           </div>
           
-          {/* Files */}
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 0 }}>
+          {/* Projects */}
+          <div 
+            onClick={() => setSelectedLeftIcon('projects')}
+            style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 0, cursor: 'pointer' }}
+          >
             <div style={{ 
               width: 40, 
               height: 40, 
-              background: 'transparent', 
-              borderRadius: 4, 
+              background: selectedLeftIcon === 'projects' ? 'rgba(255, 255, 255, 0.18)' : 'transparent', 
+              borderRadius: 8, 
               display: 'flex', 
               alignItems: 'center', 
               justifyContent: 'center' 
             }}>
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: '#9ca3af' }}>
-                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                <polyline points="14 2 14 8 20 8"></polyline>
-                <line x1="16" y1="13" x2="8" y2="13"></line>
-                <line x1="16" y1="17" x2="8" y2="17"></line>
-                <polyline points="10 9 9 9 8 9"></polyline>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: selectedLeftIcon === 'projects' ? '#ffffff' : '#9ca3af' }}>
+                <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
               </svg>
             </div>
-            <span style={{ fontSize: 11, color: '#9ca3af', fontFamily: 'Lato, sans-serif', fontWeight: 400 }}>Files</span>
+            <span style={{ fontSize: 11, color: selectedLeftIcon === 'projects' ? '#ffffff' : '#9ca3af', fontFamily: 'Lato, sans-serif', fontWeight: 400 }}>Projects</span>
           </div>
           
-          {/* Later */}
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 0 }}>
+          {/* Agents */}
+          <div 
+            onClick={() => setSelectedLeftIcon('agents')}
+            style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 0, cursor: 'pointer' }}
+          >
             <div style={{ 
               width: 40, 
               height: 40, 
-              background: 'transparent', 
-              borderRadius: 4, 
+              background: selectedLeftIcon === 'agents' ? 'rgba(255, 255, 255, 0.18)' : 'transparent', 
+              borderRadius: 8, 
               display: 'flex', 
               alignItems: 'center', 
               justifyContent: 'center' 
             }}>
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: '#9ca3af' }}>
-                <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: selectedLeftIcon === 'agents' ? '#ffffff' : '#9ca3af' }}>
+                <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"></path>
+                <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+                <line x1="12" y1="19" x2="12" y2="23"></line>
+                <line x1="8" y1="23" x2="16" y2="23"></line>
               </svg>
             </div>
-            <span style={{ fontSize: 11, color: '#9ca3af', fontFamily: 'Lato, sans-serif', fontWeight: 400 }}>Later</span>
+            <span style={{ fontSize: 11, color: selectedLeftIcon === 'agents' ? '#ffffff' : '#9ca3af', fontFamily: 'Lato, sans-serif', fontWeight: 400 }}>Agents</span>
+          </div>
+          
+          {/* Flow */}
+          <div 
+            onClick={() => setSelectedLeftIcon('flow')}
+            style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 0, cursor: 'pointer' }}
+          >
+            <div style={{ 
+              width: 40, 
+              height: 40, 
+              background: selectedLeftIcon === 'flow' ? 'rgba(255, 255, 255, 0.18)' : 'transparent', 
+              borderRadius: 8, 
+              display: 'flex', 
+              alignItems: 'center', 
+              justifyContent: 'center' 
+            }}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: selectedLeftIcon === 'flow' ? '#ffffff' : '#9ca3af' }}>
+                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+              </svg>
+            </div>
+            <span style={{ fontSize: 11, color: selectedLeftIcon === 'flow' ? '#ffffff' : '#9ca3af', fontFamily: 'Lato, sans-serif', fontWeight: 400 }}>Flow</span>
+          </div>
+          
+          {/* Settings */}
+          <div 
+            onClick={() => setSelectedLeftIcon('settings')}
+            style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 0, cursor: 'pointer' }}
+          >
+            <div style={{ 
+              width: 40, 
+              height: 40, 
+              background: selectedLeftIcon === 'settings' ? 'rgba(255, 255, 255, 0.18)' : 'transparent', 
+              borderRadius: 8, 
+              display: 'flex', 
+              alignItems: 'center', 
+              justifyContent: 'center' 
+            }}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: selectedLeftIcon === 'settings' ? '#ffffff' : '#9ca3af' }}>
+                <circle cx="12" cy="12" r="3"></circle>
+                <path d="M12 1v6m0 6v6m9-9h-6m-6 0H3m15.364 6.364l-4.243-4.243m-4.242 0L5.636 18.364m12.728 0l-4.243-4.243m-4.242 0L5.636 5.636"></path>
+              </svg>
+            </div>
+            <span style={{ fontSize: 11, color: selectedLeftIcon === 'settings' ? '#ffffff' : '#9ca3af', fontFamily: 'Lato, sans-serif', fontWeight: 400 }}>Settings</span>
           </div>
           
           {/* More */}
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 0 }}>
+          <div 
+            onClick={() => setSelectedLeftIcon('more')}
+            style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 0, cursor: 'pointer' }}
+          >
             <div style={{ 
               width: 40, 
               height: 40, 
-              background: 'transparent', 
-              borderRadius: 4, 
+              background: selectedLeftIcon === 'more' ? 'rgba(255, 255, 255, 0.18)' : 'transparent', 
+              borderRadius: 8, 
               display: 'flex', 
               alignItems: 'center', 
               justifyContent: 'center' 
             }}>
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: '#9ca3af' }}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: selectedLeftIcon === 'more' ? '#ffffff' : '#9ca3af' }}>
                 <circle cx="12" cy="12" r="1"></circle>
                 <circle cx="19" cy="12" r="1"></circle>
                 <circle cx="5" cy="12" r="1"></circle>
               </svg>
             </div>
-            <span style={{ fontSize: 11, color: '#9ca3af', fontFamily: 'Lato, sans-serif', fontWeight: 400 }}>More</span>
+            <span style={{ fontSize: 11, color: selectedLeftIcon === 'more' ? '#ffffff' : '#9ca3af', fontFamily: 'Lato, sans-serif', fontWeight: 400 }}>More</span>
           </div>
         </div>
 
@@ -3766,7 +4109,7 @@ Together, we're building not just great cars, but a sustainable future. Thank yo
 
       {/* Right Panel - Chat Interface */}
       <div style={{ 
-        flex: 1, 
+        flex: isSessionActive ? 1 : 1, 
         display: 'flex', 
         flexDirection: 'column', 
         background: currentTheme.colors.sidebarBackground,
@@ -4119,6 +4462,64 @@ Together, we're building not just great cars, but a sustainable future. Thank yo
             })}
           </div>
         </div>
+
+        {/* Session Banner */}
+        {showSessionBanner && (
+          <div style={{
+            padding: '12px 20px',
+            background: currentTheme.colors.chatBackground,
+            borderBottom: `1px solid ${currentTheme.colors.separator}`,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: 12
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, flex: 1 }}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: currentTheme.colors.buttonPrimary, flexShrink: 0 }}>
+                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+              </svg>
+              <div style={{ flex: 1 }}>
+                <div style={{ fontSize: 14, fontWeight: 600, color: getTextColor.primary, fontFamily: 'Lato, sans-serif', marginBottom: 2 }}>
+                  Start a collaborative session?
+                </div>
+                <div style={{ fontSize: 12, color: getTextColor.secondary, fontFamily: 'Lato, sans-serif' }}>
+                  Create a shared browser view where everyone can collaborate in real-time
+                </div>
+              </div>
+            </div>
+            <button
+              onClick={handleStartSession}
+              style={{
+                padding: '8px 16px',
+                background: currentTheme.colors.buttonPrimary,
+                color: currentTheme.colors.buttonPrimaryText,
+                border: 'none',
+                borderRadius: 6,
+                fontSize: 14,
+                fontWeight: 600,
+                fontFamily: 'Lato, sans-serif',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: 6,
+                flexShrink: 0,
+                transition: 'opacity 0.2s'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.opacity = '0.9'
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.opacity = '1'
+              }}
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M5 12h14"></path>
+                <path d="M12 5l7 7-7 7"></path>
+              </svg>
+              Start Session
+            </button>
+          </div>
+        )}
 
         {/* Horizontal Tabs */}
         <div style={{ 
@@ -5119,6 +5520,583 @@ Together, we're building not just great cars, but a sustainable future. Thank yo
             </div>
         </div>
       </div>
+
+      {/* Resizable Separator for Browser Panel */}
+      {isSessionActive && (
+        <div 
+          ref={browserResizeRef}
+          onMouseDown={(e) => {
+            e.preventDefault()
+            e.stopPropagation()
+            // Store initial mouse position and browser width
+            resizeStartX.current = e.clientX
+            resizeStartWidth.current = browserWidth
+            setIsResizingBrowser(true)
+          }}
+          style={{ 
+            width: '1px',
+            minWidth: '1px',
+            maxWidth: '1px',
+            background: currentTheme.colors.separator,
+            flexShrink: 0,
+            cursor: 'col-resize',
+            position: 'relative',
+            zIndex: 10,
+          }}
+        />
+      )}
+
+      {/* Collaborative Browser Panel */}
+      {isSessionActive && (
+        <div style={{
+          width: `${browserWidth}px`,
+          minWidth: '200px',
+          display: 'flex',
+          flexDirection: 'column',
+          background: currentTheme.colors.chatBackground,
+          flexShrink: 0
+        }}>
+          {/* Tabs Bar */}
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            background: currentTheme.colors.sidebarBackground,
+            borderBottom: `1px solid ${currentTheme.colors.separator}`,
+            padding: '4px 8px',
+            gap: 4,
+            overflowX: 'auto'
+          }}>
+            {browserTabs.map((tab) => (
+              <div
+                key={tab.id}
+                onClick={() => setActiveTabId(tab.id)}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 6,
+                  padding: '6px 12px',
+                  background: activeTabId === tab.id ? currentTheme.colors.chatBackground : 'transparent',
+                  borderRadius: 6,
+                  cursor: 'pointer',
+                  fontSize: 13,
+                  color: activeTabId === tab.id ? getTextColor.primary : getTextColor.secondary,
+                  fontFamily: 'Lato, sans-serif',
+                  border: activeTabId === tab.id ? `1px solid ${currentTheme.colors.separator}` : '1px solid transparent',
+                  minWidth: '120px',
+                  maxWidth: '200px',
+                  position: 'relative'
+                }}
+                onMouseEnter={(e) => {
+                  if (activeTabId !== tab.id) {
+                    e.currentTarget.style.background = currentTheme.colors.hoverBackground
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (activeTabId !== tab.id) {
+                    e.currentTarget.style.background = 'transparent'
+                  }
+                }}
+              >
+                <span style={{ flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  {tab.title}
+                </span>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    handleCloseTab(tab.id)
+                  }}
+                  style={{
+                    width: 16,
+                    height: 16,
+                    border: 'none',
+                    background: 'transparent',
+                    borderRadius: 4,
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    padding: 0,
+                    flexShrink: 0,
+                    color: activeTabId === tab.id ? getTextColor.primary : getTextColor.secondary
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background = currentTheme.colors.hoverBackground
+                    e.currentTarget.style.color = getTextColor.primary
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = 'transparent'
+                    e.currentTarget.style.color = activeTabId === tab.id ? getTextColor.primary : getTextColor.secondary
+                  }}
+                >
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: 'inherit' }}>
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                  </svg>
+                </button>
+              </div>
+            ))}
+            <button
+              onClick={handleNewTab}
+              style={{
+                width: 28,
+                height: 28,
+                border: 'none',
+                background: 'transparent',
+                borderRadius: 6,
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: getTextColor.primary,
+                flexShrink: 0,
+                marginLeft: 4
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = currentTheme.colors.hoverBackground
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = 'transparent'
+              }}
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: 'inherit' }}>
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+              </svg>
+            </button>
+          </div>
+
+          {/* Browser Header */}
+          <div style={{
+            padding: '12px 16px',
+            background: currentTheme.colors.sidebarBackground,
+            borderBottom: `1px solid ${currentTheme.colors.separator}`,
+            display: 'flex',
+            alignItems: 'center',
+            gap: 12
+          }}>
+            {/* Browser Controls */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <button
+                onClick={handleEndSession}
+                style={{
+                  width: 32,
+                  height: 32,
+                  border: 'none',
+                  background: 'transparent',
+                  borderRadius: 6,
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: getTextColor.primary
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = currentTheme.colors.hoverBackground
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = 'transparent'
+                }}
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: 'inherit' }}>
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+              </button>
+              <button
+                onClick={() => {
+                  const iframe = document.getElementById(`collab-browser-iframe-${activeTabId}`) as HTMLIFrameElement
+                  if (iframe) iframe.contentWindow?.history.back()
+                }}
+                style={{
+                  width: 32,
+                  height: 32,
+                  border: 'none',
+                  background: 'transparent',
+                  borderRadius: 6,
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: getTextColor.primary
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = currentTheme.colors.hoverBackground
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = 'transparent'
+                }}
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: 'inherit' }}>
+                  <polyline points="15 18 9 12 15 6"></polyline>
+                </svg>
+              </button>
+              <button
+                onClick={() => {
+                  const iframe = document.getElementById(`collab-browser-iframe-${activeTabId}`) as HTMLIFrameElement
+                  if (iframe) iframe.contentWindow?.history.forward()
+                }}
+                style={{
+                  width: 32,
+                  height: 32,
+                  border: 'none',
+                  background: 'transparent',
+                  borderRadius: 6,
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: getTextColor.primary
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = currentTheme.colors.hoverBackground
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = 'transparent'
+                }}
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: 'inherit' }}>
+                  <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+              </button>
+              <button
+                onClick={() => {
+                  const iframe = document.getElementById(`collab-browser-iframe-${activeTabId}`) as HTMLIFrameElement
+                  if (iframe) iframe.contentWindow?.location.reload()
+                }}
+                style={{
+                  width: 32,
+                  height: 32,
+                  border: 'none',
+                  background: 'transparent',
+                  borderRadius: 6,
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: getTextColor.primary
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = currentTheme.colors.hoverBackground
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = 'transparent'
+                }}
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: 'inherit' }}>
+                  <polyline points="23 4 23 10 17 10"></polyline>
+                  <polyline points="1 20 1 14 7 14"></polyline>
+                  <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+                </svg>
+              </button>
+            </div>
+
+            {/* URL Bar */}
+            <div style={{
+              flex: 1,
+              display: 'flex',
+              alignItems: 'center',
+              background: currentTheme.colors.chatBackground,
+              borderRadius: 8,
+              padding: '6px 12px',
+              border: `1px solid ${currentTheme.colors.separator}`,
+              gap: 8
+            }}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: getTextColor.primary, flexShrink: 0, opacity: 0.7 }}>
+                <circle cx="11" cy="11" r="8"></circle>
+                <path d="m21 21-4.35-4.35"></path>
+              </svg>
+              <input
+                type="text"
+                value={getActiveTab()?.url || browserUrl}
+                onChange={(e) => {
+                  const activeTab = getActiveTab()
+                  if (activeTab) {
+                    setBrowserTabs(tabs => tabs.map(tab => 
+                      tab.id === activeTabId ? { ...tab, url: e.target.value, error: null } : tab
+                    ))
+                  } else {
+                    setBrowserUrl(e.target.value)
+                  }
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    const activeTab = getActiveTab()
+                    let url = (activeTab?.url || browserUrl).trim()
+                    if (!url) return
+                    
+                    // Add protocol if missing
+                    if (!url.startsWith('http://') && !url.startsWith('https://')) {
+                      url = 'https://' + url
+                    }
+                    
+                    // Validate URL
+                    try {
+                      new URL(url)
+                      
+                      // Update active tab
+                      setBrowserTabs(tabs => tabs.map(tab => 
+                        tab.id === activeTabId 
+                          ? { ...tab, url, isLoading: true, error: null }
+                          : tab
+                      ))
+                      
+                      // Clear any existing timeout
+                      if (loadTimeoutRef.current) {
+                        clearTimeout(loadTimeoutRef.current)
+                      }
+                      
+                      // Load URL with automatic proxy fallback
+                      loadUrlWithProxy(url, activeTabId)
+                    } catch (err) {
+                      setBrowserTabs(tabs => tabs.map(tab => 
+                        tab.id === activeTabId 
+                          ? { ...tab, error: 'Invalid URL. Please enter a valid web address.' }
+                          : tab
+                      ))
+                    }
+                  }
+                }}
+                style={{
+                  flex: 1,
+                  border: 'none',
+                  outline: 'none',
+                  background: 'transparent',
+                  color: getTextColor.primary,
+                  fontSize: 14,
+                  fontFamily: 'Lato, sans-serif'
+                }}
+                placeholder="Enter URL or search..."
+              />
+            </div>
+
+            {/* Collaborative Users Indicator */}
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 8,
+              padding: '4px 8px',
+              background: currentTheme.colors.hoverBackground,
+              borderRadius: 6,
+              fontSize: 12,
+              color: getTextColor.primary,
+              fontFamily: 'Lato, sans-serif'
+            }}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: 'inherit' }}>
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                <circle cx="9" cy="7" r="4"></circle>
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+              </svg>
+              <span>3 collaborating</span>
+            </div>
+          </div>
+
+          {/* Browser Content */}
+          <div 
+            id="collab-browser-content"
+            style={{
+              flex: 1,
+              position: 'relative',
+              overflow: 'hidden',
+              background: '#ffffff'
+            }}
+          >
+            {getActiveTab()?.error && (
+              <div style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                background: currentTheme.colors.chatBackground,
+                zIndex: 20,
+                padding: 40
+              }}>
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: getTextColor.secondary, marginBottom: 16 }}>
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <line x1="12" y1="8" x2="12" y2="12"></line>
+                  <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                </svg>
+                <div style={{ fontSize: 16, fontWeight: 600, color: getTextColor.primary, marginBottom: 8, fontFamily: 'Lato, sans-serif' }}>
+                  Unable to load page
+                </div>
+                <div style={{ fontSize: 14, color: getTextColor.secondary, textAlign: 'center', maxWidth: 400, fontFamily: 'Lato, sans-serif', marginBottom: 20 }}>
+                  {getActiveTab()?.error || 'This website cannot be displayed in an embedded browser due to security restrictions (X-Frame-Options). Many websites block iframe embedding to prevent clickjacking attacks.'}
+                </div>
+                <button
+                  onClick={() => {
+                    const activeTab = getActiveTab()
+                    if (activeTab?.url) {
+                      window.open(activeTab.url, '_blank', 'noopener,noreferrer')
+                    }
+                  }}
+                  style={{
+                    padding: '10px 20px',
+                    background: currentTheme.colors.buttonPrimary,
+                    color: '#ffffff',
+                    border: 'none',
+                    borderRadius: 6,
+                    fontSize: 14,
+                    fontWeight: 600,
+                    cursor: 'pointer',
+                    fontFamily: 'Lato, sans-serif',
+                    transition: 'opacity 0.2s'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.opacity = '0.9'
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.opacity = '1'
+                  }}
+                >
+                  Open in New Window
+                </button>
+              </div>
+            )}
+            {getActiveTab()?.isLoading && !getActiveTab()?.error && (
+              <div style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                background: 'rgba(255, 255, 255, 0.9)',
+                zIndex: 15
+              }}>
+                <div style={{ fontSize: 14, color: getTextColor.secondary, fontFamily: 'Lato, sans-serif' }}>
+                  Loading...
+                </div>
+              </div>
+            )}
+            <iframe
+              id={`collab-browser-iframe-${activeTabId}`}
+              src={getActiveTab()?.url || 'https://en.wikipedia.org'}
+              style={{
+                width: '100%',
+                height: '100%',
+                border: 'none',
+                display: 'block'
+              }}
+              title={`Collaborative Browser - ${getActiveTab()?.title || 'Tab'}`}
+              onLoad={() => {
+                setBrowserTabs(tabs => tabs.map(tab => 
+                  tab.id === activeTabId 
+                    ? { ...tab, isLoading: false, error: null }
+                    : tab
+                ))
+                if (loadTimeoutRef.current) {
+                  clearTimeout(loadTimeoutRef.current)
+                  loadTimeoutRef.current = null
+                }
+              }}
+              onError={() => {
+                setBrowserTabs(tabs => tabs.map(tab => 
+                  tab.id === activeTabId 
+                    ? { ...tab, isLoading: false, error: 'Failed to load the webpage. The site may block embedding or there may be a network error.' }
+                    : tab
+                ))
+                if (loadTimeoutRef.current) {
+                  clearTimeout(loadTimeoutRef.current)
+                  loadTimeoutRef.current = null
+                }
+              }}
+              sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-modals allow-top-navigation allow-popups-to-escape-sandbox"
+              referrerPolicy="no-referrer-when-downgrade"
+            />
+            
+            {/* Render all tabs, but only show the active one */}
+            {browserTabs.map(tab => (
+              tab.id !== activeTabId && (
+                <iframe
+                  key={tab.id}
+                  id={`collab-browser-iframe-${tab.id}`}
+                  src={tab.url}
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    border: 'none',
+                    display: 'none'
+                  }}
+                  title={`Collaborative Browser - ${tab.title}`}
+                  sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-modals allow-top-navigation allow-popups-to-escape-sandbox"
+              referrerPolicy="no-referrer-when-downgrade"
+                />
+              )
+            ))}
+            
+            {/* Collaborative Cursors Overlay (animated) */}
+            <div style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              pointerEvents: 'none',
+              zIndex: 10
+            }}>
+              {/* Ankur's cursor */}
+              <div style={{
+                position: 'absolute',
+                top: `${cursorPositions.ankur.y}%`,
+                left: `${cursorPositions.ankur.x}%`,
+                pointerEvents: 'none',
+                transition: 'all 1.5s ease-out',
+                transform: 'translate(-50%, -50%)'
+              }}>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M3 3l7.07 16.97 2.51-7.39 7.39-2.51L3 3z"></path>
+                </svg>
+                <div style={{
+                  marginTop: 4,
+                  padding: '4px 8px',
+                  background: '#3b82f6',
+                  color: '#ffffff',
+                  borderRadius: 4,
+                  fontSize: 11,
+                  fontFamily: 'Lato, sans-serif',
+                  whiteSpace: 'nowrap',
+                  boxShadow: '0 2px 8px rgba(0,0,0,0.2)'
+                }}>
+                  Ankur
+                </div>
+              </div>
+              {/* Sakshi's cursor */}
+              <div style={{
+                position: 'absolute',
+                top: `${cursorPositions.sakshi.y}%`,
+                left: `${cursorPositions.sakshi.x}%`,
+                pointerEvents: 'none',
+                transition: 'all 1.5s ease-out',
+                transform: 'translate(-50%, -50%)'
+              }}>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10b981" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M3 3l7.07 16.97 2.51-7.39 7.39-2.51L3 3z"></path>
+                </svg>
+                <div style={{
+                  marginTop: 4,
+                  padding: '4px 8px',
+                  background: '#10b981',
+                  color: '#ffffff',
+                  borderRadius: 4,
+                  fontSize: 11,
+                  fontFamily: 'Lato, sans-serif',
+                  whiteSpace: 'nowrap',
+                  boxShadow: '0 2px 8px rgba(0,0,0,0.2)'
+                }}>
+                  Sakshi
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
