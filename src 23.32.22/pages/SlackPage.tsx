@@ -523,21 +523,21 @@ export default function SlackPage() {
   const starredChatIds = new Set(starredChats.map(c => c.id))
   
   const dmChats: ChatItem[] = [
-    { id: 'juspay-ai', name: 'Juspay AI', unread: unreadCounts['juspay-ai'] || 0, type: 'dm', avatar: getAvatar('Juspay AI'), isOnline: onlineStatus['juspay-ai'] ?? true },
-    { id: 'ankur', name: 'Ankur', unread: unreadCounts['ankur'] || 0, type: 'dm', avatar: getAvatar('Ankur'), isOnline: onlineStatus['ankur'] ?? true },
-    { id: 'sudhirr-nanda', name: 'Sudhirr Nanda', unread: unreadCounts['sudhirr-nanda'] || 0, type: 'dm', avatar: getAvatar('Sudhirr Nanda'), isOnline: onlineStatus['sudhirr-nanda'] ?? true },
-    { id: 'akhil', name: 'Akhil', unread: unreadCounts['akhil'] || 0, type: 'dm', avatar: getAvatar('Akhil'), isOnline: onlineStatus['akhil'] ?? false },
-    { id: 'sakshi-gupta', name: 'Sakshi Gupta', unread: unreadCounts['sakshi-gupta'] || 0, type: 'dm', avatar: getAvatar('Sakshi Gupta'), isOnline: onlineStatus['sakshi-gupta'] ?? true },
-    { id: 'drishtant-kaushal', name: 'Drishtant Kaushal', unread: unreadCounts['drishtant-kaushal'] || 0, type: 'dm', avatar: getAvatar('Drishtant Kaushal'), isOnline: onlineStatus['drishtant-kaushal'] ?? false },
-    { id: 'mudit-bhutani', name: 'Mudit Bhutani', unread: unreadCounts['mudit-bhutani'] || 0, type: 'dm', avatar: getAvatar('Mudit Bhutani'), isOnline: onlineStatus['mudit-bhutani'] ?? true },
-    { id: 'pranav-jang-bahadur', name: 'Pranav Jang Bahadur', unread: unreadCounts['pranav-jang-bahadur'] || 0, type: 'dm', avatar: getAvatar('Pranav Jang Bahadur'), isOnline: onlineStatus['pranav-jang-bahadur'] ?? true },
-    { id: 'meghana-kankara', name: 'Meghana Kankara', unread: unreadCounts['meghana-kankara'] || 0, type: 'dm', avatar: getAvatar('Meghana Kankara'), statusEmoji: '🎉', isOnline: onlineStatus['meghana-kankara'] ?? false },
-    { id: 'harshita', name: 'Harshita', unread: unreadCounts['harshita'] || 0, type: 'dm', avatar: getAvatar('Harshita'), statusEmoji: '☕', isOnline: onlineStatus['harshita'] ?? true },
-    { id: 'rishabh-pandey', name: 'Rishabh Pandey', unread: unreadCounts['rishabh-pandey'] || 0, type: 'dm', avatar: getAvatar('Rishabh Pandey'), isOnline: onlineStatus['rishabh-pandey'] ?? false },
-    { id: 'group-1', name: 'Akhil, Sakshi Gupta', unread: unreadCounts['group-1'] || 0, type: 'dm' },
-    { id: 'group-2', name: 'Ankita Saha, Hetvi Kothari, Mudit Bhutani', unread: unreadCounts['group-2'] || 0, type: 'dm' },
-    { id: 'group-3', name: 'Arnab, Deepanshu, Harshita', unread: unreadCounts['group-3'] || 0, type: 'dm' },
-    { id: 'group-5', name: 'Spoorthi Ramesh, Abhijeet, Shruti Karmarkar', unread: unreadCounts['group-5'] || 0, type: 'dm' },
+    { id: 'juspay-ai', name: 'Juspay AI', unread: unreadCounts['juspay-ai'] || 0, type: 'dm' as const, avatar: getAvatar('Juspay AI'), isOnline: onlineStatus['juspay-ai'] ?? true },
+    { id: 'ankur', name: 'Ankur', unread: unreadCounts['ankur'] || 0, type: 'dm' as const, avatar: getAvatar('Ankur'), isOnline: onlineStatus['ankur'] ?? true },
+    { id: 'sudhirr-nanda', name: 'Sudhirr Nanda', unread: unreadCounts['sudhirr-nanda'] || 0, type: 'dm' as const, avatar: getAvatar('Sudhirr Nanda'), isOnline: onlineStatus['sudhirr-nanda'] ?? true },
+    { id: 'akhil', name: 'Akhil', unread: unreadCounts['akhil'] || 0, type: 'dm' as const, avatar: getAvatar('Akhil'), isOnline: onlineStatus['akhil'] ?? false },
+    { id: 'sakshi-gupta', name: 'Sakshi Gupta', unread: unreadCounts['sakshi-gupta'] || 0, type: 'dm' as const, avatar: getAvatar('Sakshi Gupta'), isOnline: onlineStatus['sakshi-gupta'] ?? true },
+    { id: 'drishtant-kaushal', name: 'Drishtant Kaushal', unread: unreadCounts['drishtant-kaushal'] || 0, type: 'dm' as const, avatar: getAvatar('Drishtant Kaushal'), isOnline: onlineStatus['drishtant-kaushal'] ?? false },
+    { id: 'mudit-bhutani', name: 'Mudit Bhutani', unread: unreadCounts['mudit-bhutani'] || 0, type: 'dm' as const, avatar: getAvatar('Mudit Bhutani'), isOnline: onlineStatus['mudit-bhutani'] ?? true },
+    { id: 'pranav-jang-bahadur', name: 'Pranav Jang Bahadur', unread: unreadCounts['pranav-jang-bahadur'] || 0, type: 'dm' as const, avatar: getAvatar('Pranav Jang Bahadur'), isOnline: onlineStatus['pranav-jang-bahadur'] ?? true },
+    { id: 'meghana-kankara', name: 'Meghana Kankara', unread: unreadCounts['meghana-kankara'] || 0, type: 'dm' as const, avatar: getAvatar('Meghana Kankara'), statusEmoji: '🎉', isOnline: onlineStatus['meghana-kankara'] ?? false },
+    { id: 'harshita', name: 'Harshita', unread: unreadCounts['harshita'] || 0, type: 'dm' as const, avatar: getAvatar('Harshita'), statusEmoji: '☕', isOnline: onlineStatus['harshita'] ?? true },
+    { id: 'rishabh-pandey', name: 'Rishabh Pandey', unread: unreadCounts['rishabh-pandey'] || 0, type: 'dm' as const, avatar: getAvatar('Rishabh Pandey'), isOnline: onlineStatus['rishabh-pandey'] ?? false },
+    { id: 'group-1', name: 'Akhil, Sakshi Gupta', unread: unreadCounts['group-1'] || 0, type: 'dm' as const },
+    { id: 'group-2', name: 'Ankita Saha, Hetvi Kothari, Mudit Bhutani', unread: unreadCounts['group-2'] || 0, type: 'dm' as const },
+    { id: 'group-3', name: 'Arnab, Deepanshu, Harshita', unread: unreadCounts['group-3'] || 0, type: 'dm' as const },
+    { id: 'group-5', name: 'Spoorthi Ramesh, Abhijeet, Shruti Karmarkar', unread: unreadCounts['group-5'] || 0, type: 'dm' as const },
   ].filter(chat => chat.name !== getCurrentUser)
   
   const channelChats: ChatItem[] = ([

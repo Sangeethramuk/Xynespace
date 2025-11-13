@@ -58,53 +58,6 @@ function generateBotAvatar(botName: string): string {
   
   return `data:image/svg+xml;base64,${Buffer.from(svg).toString('base64')}`
 }
-function parseCompanySize(input: string): string {
-  const normalized = input.toLowerCase().trim()
-  if (normalized.includes('startup') || normalized.includes('small') || normalized.match(/\b(1|2|3|4|5)\d?\b/)) {
-    return 'Startup (1-50)'
-  }
-  if (normalized.includes('small') || normalized.match(/\b([5-9]\d|1\d{2}|200)\b/)) {
-    return 'Small (51-200)'
-  }
-  if (normalized.includes('medium') || normalized.match(/\b(2\d{2}|3\d{2}|4\d{2}|5\d{2}|6\d{2}|7\d{2}|8\d{2}|9\d{2}|1000)\b/)) {
-    return 'Medium (201-1000)'
-  }
-  if (normalized.includes('large') || normalized.includes('enterprise') || normalized.match(/\b(1\d{3,}|[2-9]\d{3,})\b/)) {
-    return 'Large Enterprise (1000+)'
-  }
-  return 'Medium (201-1000)' // default
-}
-
-// Parse natural language for countries
-function parseCountries(input: string): string[] {
-  const normalized = input.toLowerCase().trim()
-  const countryMap: Record<string, string> = {
-    'us': 'American', 'usa': 'American', 'united states': 'American', 'america': 'American',
-    'germany': 'German', 'german': 'German', 'de': 'German',
-    'france': 'French', 'french': 'French', 'fr': 'French',
-    'italy': 'Italian', 'italian': 'Italian', 'it': 'Italian',
-    'india': 'Indian', 'indian': 'Indian', 'in': 'Indian',
-    'uk': 'British', 'britain': 'British', 'british': 'British', 'united kingdom': 'British',
-    'spain': 'Spanish', 'spanish': 'Spanish', 'es': 'Spanish',
-    'japan': 'Japanese', 'japanese': 'Japanese', 'jp': 'Japanese',
-    'china': 'Chinese', 'chinese': 'Chinese', 'cn': 'Chinese',
-    'brazil': 'Brazilian', 'brazilian': 'Brazilian', 'br': 'Brazilian'
-  }
-  
-  const countries: string[] = []
-  const parts = normalized.split(/[,\s]+/).map(p => p.trim())
-  
-  for (const part of parts) {
-    const match = countryMap[part]
-    if (match && !countries.includes(match)) {
-      countries.push(match)
-    }
-  }
-  
-  // If no matches, default to American
-  return countries.length > 0 ? countries : ['American']
-}
-
 // Generate people names based on nationalities
 function generateNamesByNationality(nationalities: string[]): Array<{name: string, country: string, gender: string}> {
   const nameDatabase: Record<string, {male: string[], female: string[]}> = {
